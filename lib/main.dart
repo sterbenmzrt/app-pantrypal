@@ -12,6 +12,7 @@ import 'ui/screens/home_screen.dart';
 import 'ui/screens/welcome_screen.dart';
 import 'ui/screens/login_screen.dart';
 import 'ui/screens/signup_screen.dart';
+import 'ui/screens/splash_screen.dart';
 
 void main() {
   if (kIsWeb) {
@@ -57,8 +58,9 @@ class PantryPalApp extends StatelessWidget {
           title: 'PantryPal',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
-          home: const WelcomeScreen(),
+          home: const SplashScreen(),
           routes: {
+            '/welcome': (_) => const WelcomeScreen(),
             '/home': (_) => const HomeScreen(),
             '/login': (_) => const LoginScreen(),
             '/signup': (_) => const SignupScreen(),

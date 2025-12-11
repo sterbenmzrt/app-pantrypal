@@ -62,11 +62,15 @@ class InventoryItem extends Equatable {
   }
 
   factory InventoryItem.fromMap(Map<String, dynamic> map) {
+    final quantityValue = map['quantity'];
+    final quantityAsDouble =
+        quantityValue is num ? quantityValue.toDouble() : double.tryParse('$quantityValue') ?? 0;
+
     return InventoryItem(
       id: map['id'],
       name: map['name'],
       category: map['category'],
-      quantity: map['quantity'],
+      quantity: quantityAsDouble,
       unit: map['unit'],
       purchaseDate: DateTime.parse(map['purchaseDate']),
       expiryDate: DateTime.parse(map['expiryDate']),

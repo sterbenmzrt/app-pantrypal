@@ -57,7 +57,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
               },
             );
           } else if (state is InventoryError) {
-            return Center(child: Text("Error: ${state.message}"));
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Oops, we couldn't load your pantry.",
+                      style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      state.message,
+                      style: Theme.of(context).textTheme.bodySmall,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: () =>
+                          context.read<InventoryBloc>().add(LoadInventory()),
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
           return const SizedBox.shrink();
         },
