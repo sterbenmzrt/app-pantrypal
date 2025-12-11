@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PantryPal - Meal Planning &amp; Recipes</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#4CAF50",
+              "secondary": "#FF7043",
+              "background-light": "#F8F9FA",
+              "background-dark": "#101810",
+              "neutral-text-light": "#6C757D",
+              "neutral-text-dark": "#9EAD9E",
+              "surface-light": "#FFFFFF",
+              "surface-dark": "#1A2C1B",
+              "border-light": "#E9ECEF",
+              "border-dark": "#2A3C2A"
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 24px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative min-h-screen w-full flex flex-col">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="flex items-center p-4">
+<div class="flex size-12 shrink-0 items-center justify-start text-neutral-text-light dark:text-neutral-text-dark">
+<span class="material-symbols-outlined">
+                        inventory_2
+                    </span>
+</div>
+<h1 class="flex-1 text-center text-lg font-bold tracking-tight text-[#111812] dark:text-white">Recipes &amp; Meal Plan</h1>
+<div class="flex w-12 items-center justify-end">
+</div>
+</div>
+</header>
+<main class="flex-1 pb-24">
+<!-- Search Bar -->
+<div class="px-4 pb-2">
+<label class="flex flex-col min-w-40 h-12 w-full">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark shadow-sm">
+<div class="text-neutral-text-light dark:text-neutral-text-dark flex items-center justify-center pl-4">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-[#111812] dark:text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-neutral-text-light dark:placeholder:text-neutral-text-dark px-2 text-base font-normal leading-normal" placeholder="Search recipes..." value=""/>
+</div>
+</label>
+</div>
+<!-- Chips / Filters -->
+<div class="flex gap-3 px-4 py-3 overflow-x-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
+<div class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-secondary pl-4 pr-4 text-white">
+<p class="text-sm font-medium leading-normal">Use-Up-Soon</p>
+</div>
+<div class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark pl-4 pr-4">
+<p class="text-[#111812] dark:text-white text-sm font-medium leading-normal">Under 30 mins</p>
+</div>
+<div class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark pl-4 pr-4">
+<p class="text-[#111812] dark:text-white text-sm font-medium leading-normal">Breakfast</p>
+</div>
+<div class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark pl-4 pr-4">
+<p class="text-[#111812] dark:text-white text-sm font-medium leading-normal">Vegan</p>
+</div>
+<div class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark pl-4 pr-4">
+<p class="text-[#111812] dark:text-white text-sm font-medium leading-normal">Italian</p>
+</div>
+</div>
+<!-- Section Header: Suggested For You -->
+<h2 class="text-[#111812] dark:text-white text-2xl font-bold tracking-tight px-4 pb-3 pt-5">Based on Your Pantry</h2>
+<!-- Carousel: Suggested For You -->
+<div class="flex overflow-x-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
+<div class="flex items-stretch px-4 gap-4">
+<div class="flex w-64 shrink-0 flex-col gap-2 rounded-xl bg-surface-light dark:bg-surface-dark shadow-md">
+<div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-t-xl" data-alt="A vibrant salad with mixed greens, tomatoes, and cucumber in a white bowl." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDc4gwwF3IcaTOeaxXTIZ04M54ZjJMXgfh1F5jhwCKVbddRHk2Gx_9-D0Xox4l8FCUWSks6otL3PfsXTg8_C22ljtJKACa9O7ZanTaFl3AiCr47VhGxiK6-jT3Qok1DHTwpxxOmOUjR_C8jWdAq8kbRbXWy13QHyaf19eYL6lt8767s4v1HjYFKIUbHOHgU3W2-pFymp9fYH8rEENRpyHcXuspo9AkjKTZLLvZpnccb4xYXqFqrwZJOp_qnKKcKmT-g43jYaPFi2w");'></div>
+<div class="flex flex-col flex-1 justify-between p-3 pt-1">
+<div>
+<p class="text-[#111812] dark:text-white text-base font-bold leading-normal">Vibrant Garden Salad</p>
+<p class="text-neutral-text-light dark:text-neutral-text-dark text-sm font-normal leading-normal">Uses 3 pantry items</p>
+</div>
+</div>
+</div>
+<div class="flex w-64 shrink-0 flex-col gap-2 rounded-xl bg-surface-light dark:bg-surface-dark shadow-md">
+<div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-t-xl" data-alt="A classic spaghetti dish with rich tomato sauce and basil." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBCwXLl87eUXXEaSOWb77K8AF4liiMmOU1b7kf1y4TNkCURHQ_8sMUK7GpvN54vUILXQ7tSqirbKWPjhMWHR7wxsYKXejIco15c8HBDj70fd1ekWW-wfYzhEY3XCU597ry7VWSkvLCGZAPs0mXfAoxLxcgxChVa4e25wAjnqX8AA1Qx2kjY1Wb6ew1MUWlDR1Oc0fWWHt4l-54asudY32E4PJq6wVzdDNnGT8Be-OB8a0Exc_BSYkQLvHih5qZlzcskVnl7OpBeAw");'></div>
+<div class="flex flex-col flex-1 justify-between p-3 pt-1">
+<div>
+<p class="text-[#111812] dark:text-white text-base font-bold leading-normal">Classic Tomato Pasta</p>
+<p class="text-neutral-text-light dark:text-neutral-text-dark text-sm font-normal leading-normal">Uses 2 pantry items</p>
+</div>
+</div>
+</div>
+<div class="flex w-64 shrink-0 flex-col gap-2 rounded-xl bg-surface-light dark:bg-surface-dark shadow-md">
+<div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-t-xl" data-alt="A stack of fluffy pancakes topped with fresh berries and maple syrup." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDbBJoOA_vmzpoz5kBxnCeGaeF_dFQKB0ulI5B1GXxdg5Q0C_C69eByG5VzEWJQ2OgmNfMwsg2S0oAhZNzssvwci8IHqdNkijarHDdOdCs8bnFuDewXg5pZfY83UwL9QICHdIJ3REgJabSRsEBAYh0qsJmTSHP4Ui8FuuCcG6DAsxGo7WeRi5bvY_SJABrP_QNUaRKzQmsfTEJhBrLOyVSPk3IhWvSN2Xd_3UDAkR6BWLemUZab0OiLpbChXsW1kBRcoo74HRh8Ig");'></div>
+<div class="flex flex-col flex-1 justify-between p-3 pt-1">
+<div>
+<p class="text-[#111812] dark:text-white text-base font-bold leading-normal">Fluffy Berry Pancakes</p>
+<p class="text-neutral-text-light dark:text-neutral-text-dark text-sm font-normal leading-normal">Uses 4 pantry items</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section Header: All Recipes -->
+<h2 class="text-[#111812] dark:text-white text-2xl font-bold tracking-tight px-4 pb-3 pt-8">Discover Recipes</h2>
+<!-- Recipe Card Grid -->
+<div class="grid grid-cols-2 gap-4 px-4">
+<div class="flex flex-col rounded-xl bg-surface-light dark:bg-surface-dark shadow-md overflow-hidden">
+<div class="relative w-full bg-center bg-no-repeat aspect-square bg-cover" data-alt="Grilled chicken skewers with colorful bell peppers and onions." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBl1JdfbZmw3Vuq704RDp73RvF54P3VXNRsRMPGNLgGfvTo1tnQAETv5WYKaDozDq8_WAca8y7HL-0f9FOFDdg9ktq3UlZAEkvjvSdpAiIpFB8w-l_8SHoZX0iA1Oah8WMs7jGY9pz1nCdxprEsjA2TQbtzl-bzRsue7Sbmzi-KLvGKnSlh0T-nZurUfZMzBWchJZtRXvuc9uu5A4Hn3bxdVyFwkqtV7c7c9x9auzRBGd5dSQS7CoPyrj0Czas3aS_tZJz9Nhv-Fg");'>
+<button class="absolute top-2 right-2 flex items-center justify-center size-8 rounded-full bg-black/30 text-white backdrop-blur-sm">
+<span class="material-symbols-outlined !text-xl">bookmark_border</span>
+</button>
+</div>
+<div class="flex flex-col p-3">
+<p class="text-[#111812] dark:text-white text-base font-bold leading-tight">Chicken &amp; Veg Skewers</p>
+<div class="flex items-center justify-between mt-2">
+<div class="flex items-center gap-2 text-neutral-text-light dark:text-neutral-text-dark">
+<span class="material-symbols-outlined !text-base">timer</span>
+<p class="text-xs">25 min</p>
+</div>
+<button class="flex items-center justify-center size-8 rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined !text-xl">add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col rounded-xl bg-surface-light dark:bg-surface-dark shadow-md overflow-hidden">
+<div class="relative w-full bg-center bg-no-repeat aspect-square bg-cover" data-alt="A hearty bowl of lentil soup with carrots and celery." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCfkbcvvVZOQ4qqU3BBz53wcLGU2WWQmLwutYOV5rvVG2YJIG-Uk7j6YQ4nRAckezCK-K7tNPHnsGP3UhrECzEyBfJPcJsd37uOCPnkGBL2T6va06LpXfNntWoeIhlAAHG1QdMNehLTJsoxn32a0V0qmw3_GfKc6X9sed_XU7UsN9KDcyFbcNb5MULhfNDkwEDwKWwsKX3ve9fHdKcbWvh_ky9jz8U5W-ewOjxpWFmLKdP0nJosZwf9dmpo76UNl6rJIZJi3sYFnA");'>
+<button class="absolute top-2 right-2 flex items-center justify-center size-8 rounded-full bg-black/30 text-white backdrop-blur-sm">
+<span class="material-symbols-outlined !text-xl" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+</button>
+</div>
+<div class="flex flex-col p-3">
+<p class="text-[#111812] dark:text-white text-base font-bold leading-tight">Hearty Lentil Soup</p>
+<div class="flex items-center justify-between mt-2">
+<div class="flex items-center gap-2 text-neutral-text-light dark:text-neutral-text-dark">
+<span class="material-symbols-outlined !text-base">timer</span>
+<p class="text-xs">45 min</p>
+</div>
+<button class="flex items-center justify-center size-8 rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined !text-xl">add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col rounded-xl bg-surface-light dark:bg-surface-dark shadow-md overflow-hidden">
+<div class="relative w-full bg-center bg-no-repeat aspect-square bg-cover" data-alt="Fresh salmon fillet with asparagus and lemon slices." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCUykO_xZXoEYjaXYnYhlKE6IwNknTnC0JxPaEMXRPrL8pX9aAb3hav9dSCaYhxzhuTDnCu7ofPwDWGjy3JuEC8m5HeWCFdwj4VN70udLhn46ZM-7gnPjZp4H6vwzGaL2L8OvG4NalFgTN0yg_lbFDdkX3nwtBB3pVK3eOVA8NyEnzx2xcuJD9hg4g5XTyGJJV29HFBEfe0Kqb-xqPFqpGiknUWSRkNUx3H41_Ksis7o_eZ9Wzwe6R977uM3HbCn6WEBWhdSLfacQ");'>
+<button class="absolute top-2 right-2 flex items-center justify-center size-8 rounded-full bg-black/30 text-white backdrop-blur-sm">
+<span class="material-symbols-outlined !text-xl">bookmark_border</span>
+</button>
+</div>
+<div class="flex flex-col p-3">
+<p class="text-[#111812] dark:text-white text-base font-bold leading-tight">Lemon Herb Salmon</p>
+<div class="flex items-center justify-between mt-2">
+<div class="flex items-center gap-2 text-neutral-text-light dark:text-neutral-text-dark">
+<span class="material-symbols-outlined !text-base">timer</span>
+<p class="text-xs">20 min</p>
+</div>
+<button class="flex items-center justify-center size-8 rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined !text-xl">add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col rounded-xl bg-surface-light dark:bg-surface-dark shadow-md overflow-hidden">
+<div class="relative w-full bg-center bg-no-repeat aspect-square bg-cover" data-alt="Avocado toast on rustic bread, topped with seasoning." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB7ST3-ku_xWXEP5VlsBjzflt-2cK9-uWBKrbUP7qssdlIJo4TSkUCs1vTjDhwIXMLYCvNuHsvq1X6NjFqcWiiFKzV4UOPeZkcmV3OQQNcC9l6ly6GflghzHsTs-prRw2Si_UYWg1r4kwD7wkPXuUUqNJPtHapgYgK9fmuCVD6Uf84zDOMODXOhxiEwDSoWVgJYIN9AkE5BJ0p6chOPrg4YsJqseqpI_KcHXhKSJeAP5BdwvPgL9GBSrLgwbIxNN03MScVA1xiwkg");'>
+<button class="absolute top-2 right-2 flex items-center justify-center size-8 rounded-full bg-black/30 text-white backdrop-blur-sm">
+<span class="material-symbols-outlined !text-xl">bookmark_border</span>
+</button>
+</div>
+<div class="flex flex-col p-3">
+<p class="text-[#111812] dark:text-white text-base font-bold leading-tight">Avocado Smash Toast</p>
+<div class="flex items-center justify-between mt-2">
+<div class="flex items-center gap-2 text-neutral-text-light dark:text-neutral-text-dark">
+<span class="material-symbols-outlined !text-base">timer</span>
+<p class="text-xs">10 min</p>
+</div>
+<button class="flex items-center justify-center size-8 rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined !text-xl">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (FAB) -->
+<div class="fixed bottom-6 right-6">
+<button class="flex h-14 w-14 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-primary text-white shadow-lg">
+<span class="material-symbols-outlined">calendar_month</span>
+</button>
+</div>
+</div>
+</body></html>

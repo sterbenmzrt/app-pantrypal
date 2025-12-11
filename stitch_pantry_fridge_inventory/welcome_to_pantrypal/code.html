@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PantryPal - Welcome Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#4CAF50",
+              "background-light": "#F7F7F7",
+              "background-dark": "#102213",
+              "text-light": "#111812",
+              "text-dark": "#E3E3E3",
+              "secondary-text-light": "#618968",
+              "secondary-text-dark": "#9ca3af",
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans", "Noto Sans", "sans-serif"]
+            },
+            borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="flex flex-col h-full">
+<!-- HeaderImage Component -->
+<div class="w-full bg-center bg-no-repeat bg-cover flex flex-col justify-end overflow-hidden min-h-[40vh] md:min-h-[45vh]" data-alt="A neatly organized pantry shelf with various glass jars containing grains, pasta, and spices." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAeCanGJs2IS1T4L2ahcHGZWjd9ovCE-NC4_OVn75yYDDqGq4luQsLOkaNS42unPTy9tzIYVQEz_izeilmz9M8M6keJMw6mNKYWr_SXNUFqi6YbnKZ1GoRfAKU191IgNTmrHKaXknV56cBBUIWc-gaiSCyElO5JnW5t1GoNzYglABZaElAje1SQ6IuRw7lpdMTDW5TrO8AEz1bRYJaeJzn6K8_B4ywjJ9rCzipEbfH6NWXh9L9bNIsjJqnRDXn-DR3BJTKXtm4lgQ");'>
+<div class="flex items-center gap-2 p-6">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-white">kitchen</span>
+</div>
+<h2 class="text-2xl font-bold text-white tracking-tight">PantryPal</h2>
+</div>
+</div>
+<div class="flex-grow flex flex-col justify-between p-6 bg-background-light dark:bg-background-dark">
+<div class="text-center">
+<!-- HeadlineText Component -->
+<h1 class="text-text-light dark:text-text-dark tracking-tight text-4xl font-bold leading-tight pb-3 pt-6">
+                    Your Smart Kitchen Assistant
+                </h1>
+<!-- BodyText Component -->
+<p class="text-text-light dark:text-text-dark text-base font-normal leading-normal pb-3 pt-1">
+                    Reduce food waste, save money, and simplify your meal planning. Let's get your pantry organized.
+                </p>
+</div>
+<!-- Buttons Section -->
+<div class="mt-8">
+<!-- SingleButton Component -->
+<div class="flex py-3">
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 flex-1 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Get Started</span>
+</button>
+</div>
+<!-- MetaText Component -->
+<p class="text-secondary-text-light dark:text-secondary-text-dark text-sm font-normal leading-normal pb-3 pt-1 text-center">
+                    Already have an account? <a class="font-bold underline text-primary" href="#">Log In</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</body></html>

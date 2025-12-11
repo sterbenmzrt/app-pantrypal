@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Expiry Alerts - PantryPal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#4CAF50",
+              "background-light": "#F9F9F9",
+              "background-dark": "#102213",
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 24px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-10 flex h-16 items-center border-b border-zinc-200/50 dark:border-zinc-800/50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm px-4">
+<div class="flex size-12 shrink-0 items-center justify-start">
+<span class="material-symbols-outlined text-zinc-800 dark:text-zinc-200">arrow_back_ios_new</span>
+</div>
+<h1 class="flex-1 text-center text-lg font-bold text-zinc-800 dark:text-zinc-100 tracking-[-0.015em]">Expiry Alerts</h1>
+<div class="flex size-12 shrink-0 items-center justify-end">
+<button class="flex items-center justify-center rounded-full h-10 w-10 bg-transparent text-zinc-800 dark:text-zinc-100">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<main class="flex-1 pb-10">
+<!-- Filter Chips -->
+<div class="flex gap-3 p-4 overflow-x-auto whitespace-nowrap">
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary/20 dark:bg-primary/30 px-5">
+<p class="text-primary dark:text-white text-sm font-medium leading-normal">All</p>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-zinc-200 dark:bg-zinc-800 px-5">
+<p class="text-zinc-800 dark:text-zinc-200 text-sm font-medium leading-normal">Fridge</p>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-zinc-200 dark:bg-zinc-800 px-5">
+<p class="text-zinc-800 dark:text-zinc-200 text-sm font-medium leading-normal">Pantry</p>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-zinc-200 dark:bg-zinc-800 px-5">
+<p class="text-zinc-800 dark:text-zinc-200 text-sm font-medium leading-normal">Freezer</p>
+</button>
+</div>
+<!-- Expired Section -->
+<section class="px-4 pt-4">
+<h2 class="text-zinc-800 dark:text-zinc-100 text-lg font-bold leading-tight tracking-[-0.015em] pb-3">Expired</h2>
+<div class="flex flex-col gap-3">
+<!-- List Item -->
+<div class="flex items-center gap-3 bg-white dark:bg-zinc-900 rounded-xl min-h-[88px] p-3 shadow-sm shadow-zinc-200/50 dark:shadow-none border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+<div class="w-1.5 h-full bg-[#F44336] rounded-full self-stretch"></div>
+<img class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16" data-alt="A glass bottle of milk next to a glass of milk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAH5wEm3LyJ71A9f26KeIBp4K-kyR3LE4uI4qhLdE3w595y3gw6AdSNoIZ27gwCosgbhKkZrJprM-Jv9zaOHRe1sL8_Mo-3RrztoE8v2gWSIPS9QxbGqnIvuPTx-FSt9djHKHy8sKPjKX002jhPCE7ufmlQv9kuUH85RuSWLHiwVENppo9RXsu0JfmJt7HiUx__TCYz98uqhQ9NoWYbyDpHrIut5xy_ZCzPz8vFTaT7D_2b2WXFQFjNmVkzuUaH7320BwhDz2deWA"/>
+<div class="flex flex-col justify-center flex-1">
+<p class="text-zinc-900 dark:text-zinc-50 text-base font-semibold leading-normal line-clamp-1">Organic Milk</p>
+<p class="text-zinc-500 dark:text-zinc-400 text-sm font-normal leading-normal line-clamp-1">Expired yesterday</p>
+</div>
+<button class="flex items-center justify-center shrink-0 size-10 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+<span class="material-symbols-outlined text-xl">delete</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Expiring Today Section -->
+<section class="px-4 pt-6">
+<h2 class="text-zinc-800 dark:text-zinc-100 text-lg font-bold leading-tight tracking-[-0.015em] pb-3">Expiring Today</h2>
+<div class="flex flex-col gap-3">
+<!-- List Item -->
+<div class="flex items-center gap-3 bg-white dark:bg-zinc-900 rounded-xl min-h-[88px] p-3 shadow-sm shadow-zinc-200/50 dark:shadow-none border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+<div class="w-1.5 h-full bg-[#F44336] rounded-full self-stretch"></div>
+<img class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16" data-alt="Raw chicken breasts on a cutting board" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-oEr3Lf_F9NEKF8Xc2BB6MumzPb2Gu842bv3gce9yMmc4NbX5edVBMVZmQFDkSddfd3PozNGM7rddneQWYshUtUjtcytBVSd6eBwUdTzIjnoPC1n6YNBVDLT5zAqGO6VfSAjsiC4EGMhaHa45cvRa3sCc0W3tD3ba2sjavoBWSHjwIzZJJTfSFamsbqVBux0589G_uXyK7VRLnYmuALCc7vXM9aOL1jWKB503Q_nmsVlt_C-jJtsztRfbVKMJTO6XOcdzzhRujw"/>
+<div class="flex flex-col justify-center flex-1">
+<p class="text-zinc-900 dark:text-zinc-50 text-base font-semibold leading-normal line-clamp-1">Chicken Breast</p>
+<p class="text-zinc-500 dark:text-zinc-400 text-sm font-normal leading-normal line-clamp-1">Use by today</p>
+</div>
+<button class="shrink-0 h-10 px-4 rounded-full bg-primary text-white text-sm font-bold">Use It</button>
+</div>
+</div>
+</section>
+<!-- Expiring This Week Section -->
+<section class="px-4 pt-6">
+<h2 class="text-zinc-800 dark:text-zinc-100 text-lg font-bold leading-tight tracking-[-0.015em] pb-3">Expiring This Week</h2>
+<div class="flex flex-col gap-3">
+<!-- List Item 1 -->
+<div class="flex items-center gap-3 bg-white dark:bg-zinc-900 rounded-xl min-h-[88px] p-3 shadow-sm shadow-zinc-200/50 dark:shadow-none border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+<div class="w-1.5 h-full bg-[#FF9800] rounded-full self-stretch"></div>
+<img class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16" data-alt="A carton of fresh strawberries" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAu6HTu96O_QF_GseNwrHCHliTps7LsnHB_ZHyhfyX_8TAIHE3avShJWgeoj_VmxJ7LA1lmNxmuRoG4HA3pzwLXJ1-W4p1A-PsEzO9Bucx0ixhH7zFRU8Ai44SZDzgC8y3HF7gDR5awXmQJQa_saeshKxl3hE3yuayQtsBtTv8ehLT2n_eHFM862_RojaTR33jAZKOLk_hkO5X5Yq1Nfkrjbucn9cpIkyfZdPvrRoJoGisaecyiynSs1l4SJw-QskKZrmDFJlWJOw"/>
+<div class="flex flex-col justify-center flex-1">
+<p class="text-zinc-900 dark:text-zinc-50 text-base font-semibold leading-normal line-clamp-1">Strawberries</p>
+<p class="text-zinc-500 dark:text-zinc-400 text-sm font-normal leading-normal line-clamp-1">Expires in 2 days</p>
+</div>
+<button class="shrink-0 h-10 px-4 rounded-full bg-primary text-white text-sm font-bold">Use It</button>
+</div>
+<!-- List Item 2 -->
+<div class="flex items-center gap-3 bg-white dark:bg-zinc-900 rounded-xl min-h-[88px] p-3 shadow-sm shadow-zinc-200/50 dark:shadow-none border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+<div class="w-1.5 h-full bg-[#FFC107] rounded-full self-stretch"></div>
+<img class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16" data-alt="A container of Greek yogurt with berries" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcsPuy6KU3SEEwEJbdgE3841JaleEX4NdJINm_XO2K-xeTL-cAMRNjkxZID7GYW8wwL9lvlixyIVzNS7A6_GuD10cdjofIS9Ot9VoCGTguYflG_l1nXtQe1fil159rBGnZugUMfmDOmI7-RjEnp-TS1B4vrJClTfPxXMjgwVM622liJtGAATjy_ftILgx0WBeTauQeNcpnOke8raQ18PTfF2EobxoKDEhj_eCzWIhEI8Qyi8zM-MW1GtC-50eKcyadLe3LEz2xSg"/>
+<div class="flex flex-col justify-center flex-1">
+<p class="text-zinc-900 dark:text-zinc-50 text-base font-semibold leading-normal line-clamp-1">Greek Yogurt</p>
+<p class="text-zinc-500 dark:text-zinc-400 text-sm font-normal leading-normal line-clamp-1">Expires in 5 days</p>
+</div>
+<button class="shrink-0 h-10 px-4 rounded-full bg-primary text-white text-sm font-bold">Use It</button>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>

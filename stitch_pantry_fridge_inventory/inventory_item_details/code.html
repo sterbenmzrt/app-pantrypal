@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inventory Item Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4CAF50",
+                        "background-light": "#F8F9FA",
+                        "background-dark": "#102213",
+                        "warning": "#FFC107",
+                        "danger": "#F44336",
+                        "text-light": "#333333",
+                        "text-dark": "#E0E0E0",
+                        "label-light": "#757575",
+                        "label-dark": "#BDBDBD",
+                        "border-light": "#E0E0E0",
+                        "border-dark": "#424242"
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative mx-auto flex h-auto min-h-screen w-full max-w-md flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<!-- Top App Bar -->
+<div class="sticky top-0 z-10 flex items-center justify-between bg-background-light/80 dark:bg-background-dark/80 px-4 py-3 backdrop-blur-sm">
+<div class="flex size-10 shrink-0 items-center justify-center text-text-light dark:text-text-dark">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
+</div>
+<h2 class="flex-1 text-center text-lg font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-text-dark">Avocados</h2>
+<div class="flex w-10 items-center justify-end">
+<p class="shrink-0 text-base font-bold leading-normal tracking-[0.015em] text-primary">Edit</p>
+</div>
+</div>
+<div class="flex flex-1 flex-col px-4 pb-4 pt-2">
+<!-- Headline and Status Chips -->
+<div class="flex flex-col gap-3 pb-3 pt-4">
+<h1 class="text-left text-[32px] font-bold leading-tight tracking-tight text-text-light dark:text-text-dark">Avocados</h1>
+<div class="flex gap-2">
+<div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-warning/20 px-4">
+<span class="material-symbols-outlined text-base text-warning">hourglass_top</span>
+<p class="text-sm font-medium leading-normal text-warning">Expires in 3 days</p>
+</div>
+</div>
+</div>
+<!-- Description List -->
+<div class="mt-4 grid grid-cols-[auto_1fr] items-center gap-x-4">
+<div class="col-span-2 grid grid-cols-subgrid items-center border-t border-border-light dark:border-border-dark py-5">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined">scale</span>
+</div>
+<div>
+<p class="text-sm font-normal leading-normal text-label-light dark:text-label-dark">Quantity</p>
+<p class="text-base font-medium leading-normal text-text-light dark:text-text-dark">2 count</p>
+</div>
+</div>
+<div class="col-span-2 grid grid-cols-subgrid items-center border-t border-border-light dark:border-border-dark py-5">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div>
+<p class="text-sm font-normal leading-normal text-label-light dark:text-label-dark">Purchase Date</p>
+<p class="text-base font-medium leading-normal text-text-light dark:text-text-dark">May 20, 2024</p>
+</div>
+</div>
+<div class="col-span-2 grid grid-cols-subgrid items-center border-t border-border-light dark:border-border-dark py-5">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined">event_busy</span>
+</div>
+<div>
+<p class="text-sm font-normal leading-normal text-label-light dark:text-label-dark">Expiry Date</p>
+<p class="text-base font-medium leading-normal text-text-light dark:text-text-dark">May 25, 2024</p>
+</div>
+</div>
+</div>
+<!-- Body Text/Notes -->
+<div class="mt-4 rounded-lg bg-gray-100 dark:bg-white/10 p-4">
+<p class="text-sm font-medium leading-normal text-label-light dark:text-label-dark">Notes</p>
+<p class="pt-1 text-base font-normal leading-normal text-text-light dark:text-text-dark">Use for tacos on Tuesday.</p>
+</div>
+</div>
+<!-- Action Button Group -->
+<div class="sticky bottom-0 mt-auto space-y-3 bg-background-light/80 p-4 pb-8 backdrop-blur-sm dark:bg-background-dark/80">
+<button class="flex h-14 w-full items-center justify-center gap-x-2 rounded-xl bg-primary px-4 text-base font-bold text-white shadow-sm">Mark as Used</button>
+<button class="flex h-14 w-full items-center justify-center gap-x-2 rounded-xl bg-primary/20 px-4 text-base font-bold text-primary dark:bg-primary/30">Add to Shopping List</button>
+<button class="flex h-14 w-full items-center justify-center gap-x-2 rounded-xl px-4 text-base font-bold text-danger">Discard Item</button>
+</div>
+</div>
+</body></html>

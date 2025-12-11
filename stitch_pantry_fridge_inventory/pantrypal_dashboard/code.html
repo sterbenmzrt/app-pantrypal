@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PantryPal Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#4CAF50",
+              "background-light": "#f5f5f5",
+              "background-dark": "#102213",
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans", "Noto Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display">
+<div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden pb-28">
+<!-- Top App Bar -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+<h2 class="text-slate-900 dark:text-white text-2xl font-bold leading-tight tracking-[-0.015em] flex-1">Hi, Alex!</h2>
+<div class="flex size-12 shrink-0 items-center justify-end">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDrAt77lZ2By--rPzbqUO90lihISTWsa3erf76YZlMjum7jUapm90j9uBwNcHKTeAMKp-21s2YOd2pEVUP4MFuWBoi5PCGz8BFKwlpnpuGJsuzm2n2bh2wa58AePUNzLHT_WBEJkLTLyCItbsWADQWWne2tZZCRM4rPXDA23X6-cKDe6Hc3E8g-cN9nHhPGvlDFj7eyEtbNhgGM-j0GkonDScyrqB8yhrHrgtw54L8haOjVKODHedeEGobHlCCw0eIkBwj6mNrDog");'></div>
+</div>
+</div>
+<!-- Expiring Soon Section -->
+<h2 class="text-slate-900 dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Expiring Soon</h2>
+<div class="flex overflow-x-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
+<div class="flex items-stretch px-4 gap-3">
+<div class="flex h-full w-44 flex-col gap-2 rounded-xl bg-white dark:bg-slate-800 shadow-[0_4px_12px_rgba(0,0,0,0.05)] min-w-44">
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-t-xl flex flex-col" data-alt="A carton of milk" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDNvBFiZ_K578omIio5ha73iiqzxC9N1CyzC_rgHIMN005GbXup--ogmldTKaFj9RwL_VlQuQrMBwYGs17fgYXiYrfNKbL7I2xoFcfHSqzqDpBo6CgmBjBTHnvdSWhXsKvoHtp3qORDjPIHiSEbq27R_7B3J1lJ18ob_BveTy_FmK85vxEbgbmcKicCi_zarvrQe9tb61WHMFbPo9aZVD4KdMCfaFECiCCl8ObUgKNBcQGszOUZWBJd3fIngDn8cNbn7yQvjWZrlQ");'></div>
+<div class="flex flex-col flex-1 justify-between p-3 pt-0">
+<div>
+<p class="text-slate-900 dark:text-white text-base font-semibold leading-normal">Milk</p>
+<p class="text-amber-500 dark:text-amber-400 text-sm font-normal leading-normal">2 days left</p>
+</div>
+</div>
+</div>
+<div class="flex h-full w-44 flex-col gap-2 rounded-xl bg-white dark:bg-slate-800 shadow-[0_4px_12px_rgba(0,0,0,0.05)] min-w-44">
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-t-xl flex flex-col" data-alt="A loaf of bread" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA7wDREYb70FCXB3n_kiDGGXAz7dhbQYc7bXC1f9p2fDJqbBwmIdvgBbIe9qAIuCpFBbS5Uec33KyfWYq1SyMTZ3OHLpr2zXFPCNKSOteP3FiTeIW_nFYfdfBN8xDE4BdG8-JKjY6sVnODv_rgyv3ONNAf6YvqtJfwU3Se2Lq7qH80Uh00dns1rKlV-NZuX-COlYbhyThql-ydCP0shKdM1NEiXVZo9by6iN2LoiQ3Sor_df_X5-Zjj7nz0JRUpG2J0ADaoeXJK0A");'></div>
+<div class="flex flex-col flex-1 justify-between p-3 pt-0">
+<div>
+<p class="text-slate-900 dark:text-white text-base font-semibold leading-normal">Bread</p>
+<p class="text-amber-500 dark:text-amber-400 text-sm font-normal leading-normal">3 days left</p>
+</div>
+</div>
+</div>
+<div class="flex h-full w-44 flex-col gap-2 rounded-xl bg-white dark:bg-slate-800 shadow-[0_4px_12px_rgba(0,0,0,0.05)] min-w-44">
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-t-xl flex flex-col" data-alt="A bunch of fresh avocados" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAT6RjrvdbkkYu3RU5EL23RZordZKmZWZzRbkH7PIgl-tpEkwGrO8vQEGcNisxZjfF04T_hKp9CpV8p71A7TxvEuKz7bDQVFAYeskUB9TdAz9xKdDCA7_5Zj1i5uJA0BKqJPUv8rN_yD9rN2pPtB74p8T5q3smRlVXUGkockSpo6B4DH-PtvV1dyVISyYSAuKwzaqOqzMi0-p_gSS2gjIlsttXbxk1qmz7KOpPgMF-cs4r3GPLY8k4tTw_nZ6frJTDiqGOnXGKl7w");'></div>
+<div class="flex flex-col flex-1 justify-between p-3 pt-0">
+<div>
+<p class="text-slate-900 dark:text-white text-base font-semibold leading-normal">Avocados</p>
+<p class="text-red-500 dark:text-red-400 text-sm font-normal leading-normal">1 day left</p>
+</div>
+</div>
+</div>
+<div class="flex h-full w-44 flex-col gap-2 rounded-xl bg-white dark:bg-slate-800 shadow-[0_4px_12px_rgba(0,0,0,0.05)] min-w-44 items-center justify-center">
+<button class="flex flex-col items-center justify-center gap-2 text-primary dark:text-primary">
+<span class="material-symbols-outlined text-4xl">arrow_circle_right</span>
+<span class="font-semibold">See All</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Recipe Suggestion -->
+<h2 class="text-slate-900 dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-8">Tonight's Inspiration</h2>
+<div class="px-4">
+<div class="flex flex-col items-stretch justify-start rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] bg-white dark:bg-slate-800 overflow-hidden">
+<div class="w-full bg-center bg-no-repeat aspect-video bg-cover" data-alt="A delicious looking bowl of pasta with tomatoes" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBYAPou34muR51pCSlcDwUKUDoIxRIenlDClYAt4bsthKZYUE3QS2169yscbIXKJzklzpaLdDXKakk0cnoqbXYJ8piEupSM8U8f2eKK20oE2OgaInr7R8UTChbiezaGa8rtBu5p8SaUV1CMTeVJ2YpsDE_VrYgMLqfgOoAeitzxczq6_zK5GGMYytGKzhWejxIQAklARhkymNJtz3MFzATcFh5koYVt_JxKnt80P4Omlbz43h7dbdXYsWVDZPQNE2-VsyG_yVGv3A");'></div>
+<div class="flex w-full flex-col items-stretch justify-center gap-2 p-4">
+<p class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Avocado Tomato Pasta</p>
+<div class="flex items-center gap-3 justify-between">
+<p class="text-slate-600 dark:text-slate-300 text-base font-normal leading-normal">Uses your expiring avocados.</p>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-primary text-white text-sm font-bold leading-normal">
+<span class="truncate">View Recipe</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="grid grid-cols-2 gap-4 px-4 pt-8">
+<div class="flex flex-col gap-3 items-center justify-center rounded-xl bg-primary/20 dark:bg-primary/30 p-4 aspect-square">
+<span class="material-symbols-outlined text-primary dark:text-white text-4xl">add_box</span>
+<p class="text-slate-800 dark:text-white font-semibold text-center">Add to Pantry</p>
+</div>
+<div class="flex flex-col gap-3 items-center justify-center rounded-xl bg-primary/20 dark:bg-primary/30 p-4 aspect-square">
+<span class="material-symbols-outlined text-primary dark:text-white text-4xl">playlist_add</span>
+<p class="text-slate-800 dark:text-white font-semibold text-center">New Shopping List</p>
+</div>
+</div>
+<!-- Bottom Tab Bar -->
+<div class="fixed bottom-0 left-0 right-0 h-24 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-t border-slate-200 dark:border-slate-700">
+<div class="flex justify-around items-start h-full pt-2 px-2">
+<div class="flex flex-col items-center justify-center gap-1 text-primary dark:text-primary">
+<span class="material-symbols-outlined text-3xl">dashboard</span>
+<span class="text-xs font-semibold">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">inventory_2</span>
+<span class="text-xs font-medium">My Pantry</span>
+</div>
+<div class="flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">menu_book</span>
+<span class="text-xs font-medium">Recipes</span>
+</div>
+<div class="flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">receipt_long</span>
+<span class="text-xs font-medium">Shopping List</span>
+</div>
+</div>
+</div>
+</div>
+</body></html>
