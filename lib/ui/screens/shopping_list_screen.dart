@@ -1,37 +1,90 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uuid/uuid.dart';
+import '../../logic/shopping/shopping_bloc.dart';
+import '../../logic/shopping/shopping_event.dart';
+import '../../logic/shopping/shopping_state.dart';
+import '../../data/models/shopping_item.dart';
 
 class ShoppingListScreen extends StatelessWidget {
   const ShoppingListScreen({Key? key}) : super(key: key);
 
+  void _showAddItemDialog(BuildContext context) {
+    final TextEditingController controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add Shopping Item'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(hintText: 'Item Name'),
+            autofocus: true,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final text = controller.text.trim();
+                if (text.isNotEmpty) {
+                  final newItem = ShoppingItem(
+                    id: const Uuid().v4(),
+                    name: text,
+                    category: 'Uncategorized',
+                  );
+                  context.read<ShoppingBloc>().add(AddShoppingItem(newItem));
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Minimal implementation inspired by Stitch prototype structure
     return Scaffold(
-      body: ListView(
-        padding: const EdgeInsets.only(bottom: 80),
-        children: const [
-          _SectionTitle('Suggested for You'),
-          _HorizontalSuggestions(),
-          _SectionTitle('Your List'),
-          _CategoryCard(
-            title: 'Produce',
-            items: [
-              _CheckItem(title: 'Apples', subtitle: '6 items', badge: 'Meal Plan'),
-              _CheckItem(title: 'Avocado', subtitle: '2 items', badge: 'Low Stock'),
-              _CheckItem(title: 'Bananas', subtitle: '1 bunch', checked: true),
+      body: BlocBuilder<ShoppingBloc, ShoppingState>(
+        builder: (context, state) {
+          if (state.status == ShoppingStatus.loading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state.status == ShoppingStatus.error) {
+            return Center(child: Text('Error: ${state.errorMessage}'));
+          }
+
+          // Segregate items (example logic, simplified)
+          // For now, we'll keep the "Suggested" static as a mockup/placeholder
+          // and use "Your List" for the actual database items.
+          final yourList = state.items;
+
+          return ListView(
+            padding: const EdgeInsets.only(bottom: 80),
+            children: [
+              const _SectionTitle('Your List'),
+              if (yourList.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text('Your list is empty. Add items!'),
+                )
+              else
+                _CategoryCard(
+                  title: 'My Items',
+                  items:
+                      yourList.map((item) => _CheckItem(item: item)).toList(),
+                ),
             ],
-          ),
-          _CategoryCard(
-            title: 'Dairy & Eggs',
-            items: [
-              _CheckItem(title: 'Eggs', subtitle: '1 dozen'),
-              _CheckItem(title: 'Greek Yogurt', subtitle: '500g'),
-            ],
-          ),
-        ],
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => _showAddItemDialog(context),
         child: const Icon(Icons.add),
       ),
     );
@@ -45,71 +98,11 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-      child: Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-    );
-  }
-}
-
-class _HorizontalSuggestions extends StatelessWidget {
-  const _HorizontalSuggestions();
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 180,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: const [
-          _SuggestionCard(title: 'Milk', subtitle: 'Low Stock', imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDKdx0t9pAtBdvVIfHHJeE4u9KfyJfK5kC12sJHwGfXUH5eCyqzhqr8vUPMDNHRlXcshffIXdni4aB3IgWFg4L6R-JCi1XM8FcNYSK9SxLXD3fdil-nWVS8lImYcH_bCl_GODxj-zcxCtqxaf_C6_8yHh10musrL-EesF93x9qjV4LZEz-HCpSvhFu01qenCzO-YBh-8_NhjagMXtA23IzwQ5b1A5oJ39n40Dh__dUTn4Y6mrGhr5Y-Qk0qaxPN9ZIFfTCOAkUmyg'),
-          SizedBox(width: 12),
-          _SuggestionCard(title: 'Chicken', subtitle: 'For Lasagna', imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBJWSaG6bzHiuyLRlA2VHFyQOEDns9rZq9A9XcW_Gl0TWPctNoFb_sYM3Dv1nMzRVWp8Afkw0uVdZvEmtPGBWlW31f68MUSfjsIR_zlT_6Tz-V3S0cIXt1800qzFzDXye6llQSqQRz87JRDwKDNuyEXsBLZRM9fiGsC84erjCGYQg1TCrqDfMMQdC2OJT2qnZX02FGmRUaytr2scnraB5qnVPHfRL1Baf7nmv89qjwHOBzDtqS1a4TEJN22Z_uNjZXUHwWGsN01_g'),
-          SizedBox(width: 12),
-          _SuggestionCard(title: 'Carrots', subtitle: 'For Salad', imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCFDobD_WRJYV8Xy2lwXNY3THDOi76iT7GOvPA1mOTC7IQEM0SwoM0S2jjRkPdTFQkX3QD_JimAfdH_nLjJcXdaxz-9Mc2FCtU4YTjA7LXFFbn2YgzFu2dp9rzKRgZSnvXXtHMSMOcjMxGu-6uB2r51p4OtoglHeqd3Dhkh3EvyOLoLrIKceYL36V9zFGi9x2ZEZ_6uVsEwZB_8YHVFSQ-kI4ifz-gpQslPuK6oSSQzL2Wy9hSEj5HAHayGttuZrwo-S6CEeRK2Sw'),
-        ],
-      ),
-    );
-  }
-}
-
-class _SuggestionCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String imageUrl;
-  const _SuggestionCard({required this.title, required this.subtitle, required this.imageUrl});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 160,
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0,2))],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-            child: Image.network(imageUrl, height: 100, fit: BoxFit.cover),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-                const SizedBox(height: 4),
-                Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
-                const SizedBox(height: 8),
-                OutlinedButton(
-                  onPressed: () {},
-                  child: const Text('Add'),
-                  style: OutlinedButton.styleFrom(minimumSize: const Size(60, 32)),
-                ),
-              ],
-            ),
-          )
-        ],
+      child: Text(
+        title,
+        style: Theme.of(
+          context,
+        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -117,7 +110,7 @@ class _SuggestionCard extends StatelessWidget {
 
 class _CategoryCard extends StatelessWidget {
   final String title;
-  final List<_CheckItem> items;
+  final List<Widget> items;
   const _CategoryCard({required this.title, required this.items});
   @override
   Widget build(BuildContext context) {
@@ -132,10 +125,15 @@ class _CategoryCard extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-                child: Text(title.toUpperCase(), style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.grey)),
+                child: Text(
+                  title.toUpperCase(),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
               ),
-              for (final item in items) const Divider(height: 1),
-              for (final item in items) item,
+              for (final item in items) ...[const Divider(height: 1), item],
             ],
           ),
         ),
@@ -145,38 +143,72 @@ class _CategoryCard extends StatelessWidget {
 }
 
 class _CheckItem extends StatelessWidget {
-  final String title;
-  final String? subtitle;
-  final String? badge;
-  final bool checked;
-  const _CheckItem({required this.title, this.subtitle, this.badge, this.checked = false});
+  final ShoppingItem item;
+
+  const _CheckItem({required this.item});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
         children: [
-          Checkbox(value: checked, onChanged: (_) {}),
+          Checkbox(
+            value: item.isChecked,
+            onChanged: (_) {
+              context.read<ShoppingBloc>().add(ToggleShoppingItem(item));
+            },
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: TextStyle(decoration: checked ? TextDecoration.lineThrough : null, color: checked ? Colors.grey : null)),
-                if (subtitle != null)
-                  Text(subtitle!, style: TextStyle(fontSize: 12, color: checked ? Colors.grey : Colors.grey[600], decoration: checked ? TextDecoration.lineThrough : null)),
+                Text(
+                  item.name,
+                  style: TextStyle(
+                    decoration:
+                        item.isChecked ? TextDecoration.lineThrough : null,
+                    color: item.isChecked ? Colors.grey : null,
+                  ),
+                ),
               ],
             ),
           ),
-          if (badge != null)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: Text(badge!, style: const TextStyle(fontSize: 11)),
-            ),
+          IconButton(
+            icon: const Icon(Icons.delete, size: 20, color: Colors.grey),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder:
+                    (ctx) => AlertDialog(
+                      title: const Text('Delete Item'),
+                      content: Text(
+                        'Remove "${item.name}" from your shopping list?',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          child: const Text('Cancel'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            context.read<ShoppingBloc>().add(
+                              DeleteShoppingItem(item.id),
+                            );
+                            Navigator.pop(ctx);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('Delete'),
+                        ),
+                      ],
+                    ),
+              );
+            },
+          ),
         ],
       ),
     );

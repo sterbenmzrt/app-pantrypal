@@ -12,3 +12,5 @@ class SearchRecipes extends RecipeEvent {
   @override
   List<Object> get props => [query];
 }
+
+class LoadMoreRecipes extends RecipeEvent {}

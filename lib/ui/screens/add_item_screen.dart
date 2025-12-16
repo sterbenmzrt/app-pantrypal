@@ -35,7 +35,20 @@ class _AddItemScreenState extends State<AddItemScreen> {
     "Dairy",
     "Meat",
     "Spices",
+    "Other",
   ];
+
+  // Material Icons for each category
+  final Map<String, IconData> _categoryIcons = {
+    "Pantry": Icons.kitchen,
+    "Fridge": Icons.kitchen_outlined,
+    "Freezer": Icons.ac_unit,
+    "Vegetables": Icons.eco,
+    "Dairy": Icons.egg_alt,
+    "Meat": Icons.kebab_dining,
+    "Spices": Icons.scatter_plot,
+    "Other": Icons.category,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -103,36 +116,63 @@ class _AddItemScreenState extends State<AddItemScreen> {
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
+                runSpacing: 8,
                 children:
                     _categories.map((cat) {
                       final isSelected = _selectedCategory == cat;
                       return FilterChip(
+                        avatar: Icon(
+                          _categoryIcons[cat],
+                          size: 18,
+                          color:
+                              isSelected
+                                  ? Theme.of(context).primaryColor
+                                  : Colors.grey,
+                        ),
                         label: Text(cat),
                         selected: isSelected,
                         onSelected: (selected) {
                           setState(() {
                             _selectedCategory = cat;
                             // Smart Expiry Logic
-                            if (cat == "Dairy")
-                              _expiryDate = DateTime.now().add(
-                                const Duration(days: 7),
-                              );
-                            if (cat == "Meat")
-                              _expiryDate = DateTime.now().add(
-                                const Duration(days: 3),
-                              );
-                            if (cat == "Vegetables")
-                              _expiryDate = DateTime.now().add(
-                                const Duration(days: 5),
-                              );
-                            if (cat == "Pantry")
-                              _expiryDate = DateTime.now().add(
-                                const Duration(days: 30),
-                              );
-                            if (cat == "Freezer")
-                              _expiryDate = DateTime.now().add(
-                                const Duration(days: 90),
-                              );
+                            switch (cat) {
+                              case "Dairy":
+                                _expiryDate = DateTime.now().add(
+                                  const Duration(days: 7),
+                                );
+                                break;
+                              case "Meat":
+                                _expiryDate = DateTime.now().add(
+                                  const Duration(days: 3),
+                                );
+                                break;
+                              case "Vegetables":
+                                _expiryDate = DateTime.now().add(
+                                  const Duration(days: 5),
+                                );
+                                break;
+                              case "Pantry":
+                                _expiryDate = DateTime.now().add(
+                                  const Duration(days: 30),
+                                );
+                                break;
+                              case "Freezer":
+                                _expiryDate = DateTime.now().add(
+                                  const Duration(days: 90),
+                                );
+                                break;
+                              case "Spices":
+                                _expiryDate = DateTime.now().add(
+                                  const Duration(days: 180),
+                                );
+                                break;
+                              case "Fridge":
+                              case "Other":
+                              default:
+                                _expiryDate = DateTime.now().add(
+                                  const Duration(days: 7),
+                                );
+                            }
                           });
                         },
                         selectedColor: Theme.of(

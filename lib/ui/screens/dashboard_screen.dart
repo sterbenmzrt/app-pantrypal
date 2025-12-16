@@ -1,137 +1,185 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../logic/inventory/inventory_bloc.dart';
-import '../../logic/inventory/inventory_event.dart';
 import '../../logic/inventory/inventory_state.dart';
-import '../widgets/item_card.dart';
-import 'add_item_screen.dart';
-import 'item_details_screen.dart';
+import '../../data/models/inventory_item.dart';
 
-class DashboardScreen extends StatefulWidget {
+class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
-
-  @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
-}
-
-class _DashboardScreenState extends State<DashboardScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Load inventory on init
-    context.read<InventoryBloc>().add(LoadInventory());
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocBuilder<InventoryBloc, InventoryState>(
         builder: (context, state) {
-          if (state is InventoryLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is InventoryLoaded) {
-            if (state.items.isEmpty) {
-              return _buildEmptyState();
-            }
-            return ListView.builder(
-              padding: const EdgeInsets.only(bottom: 80),
-              itemCount: state.items.length,
-              itemBuilder: (context, index) {
-                final item = state.items[index];
-                return InventoryItemCard(
-                  item: item,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ItemDetailsScreen(item: item),
-                      ),
-                    );
-                  },
-                  onDelete: () {
-                    context.read<InventoryBloc>().add(
-                      DeleteInventoryItem(item.id),
-                    );
-                  },
-                );
-              },
-            );
-          } else if (state is InventoryError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Oops, we couldn't load your pantry.",
-                      style: Theme.of(context).textTheme.titleMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      state.message,
-                      style: Theme.of(context).textTheme.bodySmall,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: () =>
-                          context.read<InventoryBloc>().add(LoadInventory()),
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('Retry'),
-                    ),
-                  ],
+          int totalItems = 0;
+          int lowStock = 0;
+          int expiringSoon = 0;
+          List<InventoryItem> recentItems = [];
+
+          if (state is InventoryLoaded) {
+            totalItems = state.items.length;
+            lowStock =
+                state.items
+                    .where((i) => i.quantity <= 2)
+                    .length; // Threshold example
+            final now = DateTime.now();
+            expiringSoon =
+                state.items.where((i) {
+                  // Expiring within 3 days
+                  return i.expiryDate.difference(now).inDays <= 3 &&
+                      i.expiryDate.isAfter(now);
+                }).length;
+            recentItems = state.items.take(3).toList();
+          }
+
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              Text(
+                'Good Morning,',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
-            );
-          }
-          return const SizedBox.shrink();
-        },
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AddItemScreen()),
+              const SizedBox(height: 8),
+              Text(
+                'Here is your pantry summary',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: _SummaryCard(
+                      title: 'Total Items',
+                      value: '$totalItems',
+                      icon: Icons.inventory_2,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _SummaryCard(
+                      title: 'Low Stock',
+                      value: '$lowStock',
+                      icon: Icons.warning,
+                      color: Colors.orange,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _SummaryCard(
+                      title: 'Expiring',
+                      value: '$expiringSoon',
+                      icon: Icons.timer,
+                      color: Colors.red,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _SummaryCard(
+                      title: 'Recipes',
+                      value: '12',
+                      icon: Icons.menu_book,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+              Text(
+                'Recent Activity',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              if (recentItems.isEmpty)
+                const Text('No recent items added.')
+              else
+                ...recentItems.map(
+                  (item) => Card(
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        child: Text(item.name[0].toUpperCase()),
+                      ),
+                      title: Text(item.name),
+                      subtitle: Text(
+                        'Exp: ${item.expiryDate.toString().split(' ')[0]}',
+                      ),
+                      trailing: Text('${item.quantity} ${item.unit}'),
+                    ),
+                  ),
+                ),
+            ],
           );
         },
-        label: const Text("Add Item"),
-        icon: const Icon(Icons.add),
-        backgroundColor: Theme.of(context).primaryColor,
       ),
     );
   }
+}
 
-  Widget _buildEmptyState() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
+class _SummaryCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const _SummaryCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.kitchen, size: 80, color: Colors.green[300]),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color),
+          ),
           const SizedBox(height: 16),
           Text(
-            "Your Smart Kitchen Assistant",
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            value,
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
-          const Text(
-            "Reduce food waste, save money, and simplify your meal planning. Let's get your pantry organized.",
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const AddItemScreen()),
-              );
-            },
-            icon: const Icon(Icons.add),
-            label: const Text('Get Started'),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
           ),
         ],
       ),

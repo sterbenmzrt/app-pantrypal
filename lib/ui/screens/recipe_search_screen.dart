@@ -102,50 +102,79 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
                   if (state.recipes.isEmpty) {
                     return const Center(child: Text("No recipes found."));
                   }
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(16),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.8,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                        ),
-                    itemCount: state.recipes.length,
-                    itemBuilder: (context, index) {
-                      final recipe = state.recipes[index];
-                      return Card(
-                        clipBehavior: Clip.antiAlias,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: CachedNetworkImage(
-                                imageUrl: recipe.imageUrl,
-                                fit: BoxFit.cover,
-                                placeholder:
-                                    (context, url) =>
-                                        Container(color: Colors.grey[200]),
-                                errorWidget:
-                                    (context, url, error) =>
-                                        const Icon(Icons.error),
+                  return CustomScrollView(
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.all(16),
+                        sliver: SliverGrid(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.8,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                recipe.title,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            final recipe = state.recipes[index];
+                            return Card(
+                              clipBehavior: Clip.antiAlias,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Expanded(
+                                    child: CachedNetworkImage(
+                                      imageUrl: recipe.imageUrl,
+                                      fit: BoxFit.cover,
+                                      placeholder:
+                                          (context, url) => Container(
+                                            color: Colors.grey[200],
+                                          ),
+                                      errorWidget:
+                                          (context, url, error) =>
+                                              const Icon(Icons.error),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      recipe.title,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }, childCount: state.recipes.length),
+                        ),
+                      ),
+                      if (state.hasMore)
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Center(
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  context.read<RecipeBloc>().add(
+                                    LoadMoreRecipes(),
+                                  );
+                                },
+                                icon: const Icon(Icons.expand_more),
+                                label: Text(
+                                  'Load More (${state.recipes.length}/${state.allRecipes.length})',
                                 ),
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      );
-                    },
+                      const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                    ],
                   );
                 } else if (state is RecipeError) {
                   return Center(

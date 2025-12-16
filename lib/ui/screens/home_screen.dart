@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dashboard_screen.dart';
+import 'dashboard_screen.dart'; // Ensure this uses the new file
+import 'inventory_screen.dart';
+import 'profile_screen.dart';
 import 'recipe_search_screen.dart';
 import 'shopping_list_screen.dart';
 
@@ -15,14 +17,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     const DashboardScreen(),
+    const InventoryScreen(),
     const RecipeSearchScreen(),
     const ShoppingListScreen(),
-    const Center(child: Text('Profile & Settings coming soon')),
+    const ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     final titles = [
+      'Dashboard',
       'My Pantry',
       'Recipes & Meal Plan',
       'Shopping List',
@@ -41,6 +45,11 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedIndex: _currentIndex,
         onDestinationSelected: (index) => setState(() => _currentIndex = index),
         destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(Icons.dashboard),
+            label: "Home",
+          ),
           NavigationDestination(
             icon: Icon(Icons.kitchen_outlined),
             selectedIcon: Icon(Icons.kitchen),
