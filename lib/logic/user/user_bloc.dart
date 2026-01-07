@@ -9,6 +9,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   UserBloc({required this.repository}) : super(const UserState()) {
     on<LoadUserProfile>(_onLoadUserProfile);
     on<UpdateUserProfile>(_onUpdateUserProfile);
+    on<ClearUserProfile>(_onClearUserProfile);
+    on<SetUserProfile>(_onSetUserProfile);
   }
 
   Future<void> _onLoadUserProfile(
@@ -39,5 +41,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         state.copyWith(status: UserStatus.error, errorMessage: e.toString()),
       );
     }
+  }
+
+  void _onClearUserProfile(ClearUserProfile event, Emitter<UserState> emit) {
+    emit(const UserState()); // Reset to initial state
+  }
+
+  void _onSetUserProfile(SetUserProfile event, Emitter<UserState> emit) {
+    emit(state.copyWith(status: UserStatus.loaded, profile: event.profile));
   }
 }

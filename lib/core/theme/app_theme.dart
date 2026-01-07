@@ -25,7 +25,7 @@ class AppTheme {
         surface: surface,
         background: background,
       ),
-      textTheme: GoogleFonts.outfitTextTheme().apply(
+      textTheme: GoogleFonts.plusJakartaSansTextTheme().apply(
         bodyColor: textPrimary,
         displayColor: textPrimary,
       ),

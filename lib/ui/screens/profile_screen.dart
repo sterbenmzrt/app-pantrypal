@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../logic/auth/auth_bloc.dart';
+import '../../logic/auth/auth_event.dart';
 import '../../logic/settings/settings_bloc.dart';
 import '../../logic/settings/settings_event.dart';
 import '../../logic/settings/settings_state.dart';
@@ -98,7 +100,7 @@ class ProfileScreen extends StatelessWidget {
 
           const SizedBox(height: 32),
           TextButton(
-            onPressed: () {},
+            onPressed: () => _showLogoutConfirmation(context),
             child: const Text(
               'Log Out',
               style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
@@ -257,6 +259,38 @@ class ProfileScreen extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  void _showLogoutConfirmation(BuildContext context) {
+    // Capture the AuthBloc reference before showing the dialog
+    final authBloc = context.read<AuthBloc>();
+    print('Profile: AuthBloc captured: $authBloc');
+
+    showDialog(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: const Text('Log Out'),
+            content: const Text('Are you sure you want to log out?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  print(
+                    'Profile: Logout button pressed, dispatching LogoutRequested',
+                  );
+                  authBloc.add(LogoutRequested());
+                  Navigator.pop(dialogContext);
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                child: const Text('Log Out'),
+              ),
+            ],
+          ),
     );
   }
 }

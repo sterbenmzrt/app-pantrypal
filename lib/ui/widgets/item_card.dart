@@ -7,6 +7,18 @@ class InventoryItemCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onDelete;
 
+  // Map categories to asset images
+  static const Map<String, String> _categoryImages = {
+    'Pantry': 'assets/images/categories/pantry.png',
+    'Fridge': 'assets/images/categories/fridge.png',
+    'Freezer': 'assets/images/categories/freezer.png',
+    'Vegetables': 'assets/images/categories/vegetables.png',
+    'Dairy': 'assets/images/categories/dairy.png',
+    'Meat': 'assets/images/categories/meat.png',
+    'Spices': 'assets/images/categories/spices.png',
+    'Other': 'assets/images/categories/other.png',
+  };
+
   const InventoryItemCard({
     Key? key,
     required this.item,
@@ -17,6 +29,8 @@ class InventoryItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final statusColor = DateHelpers.getStatusColor(item.expiryDate);
+    final imagePath =
+        _categoryImages[item.category] ?? _categoryImages['Other']!;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -31,9 +45,14 @@ class InventoryItemCard extends StatelessWidget {
             shape: BoxShape.circle,
             border: Border.all(color: statusColor, width: 2),
           ),
-          child: Icon(
-            Icons.kitchen, // Placeholder icon
-            color: statusColor,
+          child: ClipOval(
+            child: Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
+              errorBuilder:
+                  (context, error, stackTrace) =>
+                      Icon(Icons.kitchen, color: statusColor),
+            ),
           ),
         ),
         title: Text(

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../logic/auth/auth_bloc.dart';
 import '../../logic/auth/auth_event.dart';
 import '../../logic/auth/auth_state.dart';
+import '../../logic/user/user_bloc.dart';
+import '../../logic/user/user_event.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -33,6 +35,8 @@ class _SignupScreenState extends State<SignupScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.status == AuthStatus.authenticated) {
+          // Set the user profile from the authenticated user
+          context.read<UserBloc>().add(SetUserProfile(state.user));
           // Navigate to home and remove all previous routes
           Navigator.of(
             context,
