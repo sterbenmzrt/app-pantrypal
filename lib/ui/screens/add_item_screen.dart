@@ -23,30 +23,32 @@ class _AddItemScreenState extends State<AddItemScreen> {
     text: "items",
   );
 
-  String _selectedCategory = "Pantry";
+  String _selectedCategory = "Dairy";
   DateTime _expiryDate = DateTime.now().add(const Duration(days: 7));
   DateTime _purchaseDate = DateTime.now();
 
   final List<String> _categories = [
-    "Pantry",
-    "Fridge",
-    "Freezer",
-    "Vegetables",
     "Dairy",
-    "Meat",
-    "Spices",
+    "Meat & Protein",
+    "Vegetables",
+    "Fruits",
+    "Spices & Seasonings",
+    "Pantry / Dry Goods",
+    "Beverages",
+    "Freezer",
     "Other",
   ];
 
   // Material Icons for each category
   final Map<String, IconData> _categoryIcons = {
-    "Pantry": Icons.kitchen,
-    "Fridge": Icons.kitchen_outlined,
-    "Freezer": Icons.ac_unit,
-    "Vegetables": Icons.eco,
     "Dairy": Icons.egg_alt,
-    "Meat": Icons.kebab_dining,
-    "Spices": Icons.scatter_plot,
+    "Meat & Protein": Icons.kebab_dining,
+    "Vegetables": Icons.eco,
+    "Fruits": Icons.apple,
+    "Spices & Seasonings": Icons.scatter_plot,
+    "Pantry / Dry Goods": Icons.kitchen,
+    "Beverages": Icons.local_drink,
+    "Freezer": Icons.ac_unit,
     "Other": Icons.category,
   };
 
@@ -141,7 +143,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   const Duration(days: 7),
                                 );
                                 break;
-                              case "Meat":
+                              case "Meat & Protein":
                                 _expiryDate = DateTime.now().add(
                                   const Duration(days: 3),
                                 );
@@ -151,9 +153,24 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   const Duration(days: 5),
                                 );
                                 break;
-                              case "Pantry":
+                              case "Fruits":
+                                _expiryDate = DateTime.now().add(
+                                  const Duration(days: 7),
+                                );
+                                break;
+                              case "Spices & Seasonings":
+                                _expiryDate = DateTime.now().add(
+                                  const Duration(days: 180),
+                                );
+                                break;
+                              case "Pantry / Dry Goods":
                                 _expiryDate = DateTime.now().add(
                                   const Duration(days: 30),
+                                );
+                                break;
+                              case "Beverages":
+                                _expiryDate = DateTime.now().add(
+                                  const Duration(days: 14),
                                 );
                                 break;
                               case "Freezer":
@@ -161,12 +178,6 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   const Duration(days: 90),
                                 );
                                 break;
-                              case "Spices":
-                                _expiryDate = DateTime.now().add(
-                                  const Duration(days: 180),
-                                );
-                                break;
-                              case "Fridge":
                               case "Other":
                               default:
                                 _expiryDate = DateTime.now().add(

@@ -14,10 +14,7 @@ class WelcomeScreen extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Image.network(
-                  'https://lh3.googleusercontent.com/aida-public/AB6AXuAeCanGJs2IS1T4L2ahcHGZWjd9ovCE-NC4_OVn75yYDDqGq4luQsLOkaNS42unPTy9tzIYVQEz_izeilmz9M8M6keJMw6mNKYWr_SXNUFqi6YbnKZ1GoRfAKU191IgNTmrHKaXknV56cBBUIWc-gaiSCyElO5JnW5t1GoNzYglABZaElAje1SQ6IuRw7lpdMTDW5TrO8AEz1bRYJaeJzn6K8_B4ywjJ9rCzipEbfH6NWXh9L9bNIsjJqnRDXn-DR3BJTKXtm4lgQ',
-                  fit: BoxFit.cover,
-                ),
+                Image.asset('assets/images/hero_splash.jpg', fit: BoxFit.cover),
                 Positioned(
                   left: 16,
                   top: 16,
@@ -59,7 +56,9 @@ class WelcomeScreen extends StatelessWidget {
                   Text(
                     'Your Smart Kitchen Assistant',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   const Text(
@@ -71,7 +70,9 @@ class WelcomeScreen extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () => Navigator.pushNamed(context, '/signup'),
-                      style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(52),
+                      ),
                       child: const Text('Get Started'),
                     ),
                   ),

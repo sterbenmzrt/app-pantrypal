@@ -36,8 +36,8 @@ class ProfileScreen extends StatelessWidget {
                             user.profileImage != null &&
                                     user.profileImage!.isNotEmpty
                                 ? NetworkImage(user.profileImage!)
-                                : const NetworkImage(
-                                  'https://lh3.googleusercontent.com/aida-public/AB6AXuDcXm9c_-O7N4H5C0XltaEsuYkAeSowAeqOdRcp_rqlIFARGzXwadNA4AJAUdMmprS8n7GZQirvIcX7XtLGBq5_QoXsm3M3eem7_FNBWrQOj6tzy-PPvmR2ZFA-aHYRiZ30Ev1qjCnkueyItslEHyUVR5o2Gu3XhKhKMbo9srNkJEPgLICecuwI9120513mE1gv6QqlewdX4MlCT6JkSW6Gsd0Ioh_QG98zKaeLeCRwtwSrhfI5ai5xzPlCtmDoQ5ZzI_jeNgJqGw',
+                                : const AssetImage(
+                                  'assets/images/default_avatar.png',
                                 ),
                         fit: BoxFit.cover,
                       ),
@@ -313,8 +313,8 @@ class ProfileScreen extends StatelessWidget {
                         user.profileImage != null &&
                                 user.profileImage!.isNotEmpty
                             ? NetworkImage(user.profileImage!)
-                            : const NetworkImage(
-                              'https://lh3.googleusercontent.com/aida-public/AB6AXuDcXm9c_-O7N4H5C0XltaEsuYkAeSowAeqOdRcp_rqlIFARGzXwadNA4AJAUdMmprS8n7GZQirvIcX7XtLGBq5_QoXsm3M3eem7_FNBWrQOj6tzy-PPvmR2ZFA-aHYRiZ30Ev1qjCnkueyItslEHyUVR5o2Gu3XhKhKMbo9srNkJEPgLICecuwI9120513mE1gv6QqlewdX4MlCT6JkSW6Gsd0Ioh_QG98zKaeLeCRwtwSrhfI5ai5xzPlCtmDoQ5ZzI_jeNgJqGw',
+                            : const AssetImage(
+                              'assets/images/default_avatar.png',
                             ),
                     fit: BoxFit.cover,
                   ),

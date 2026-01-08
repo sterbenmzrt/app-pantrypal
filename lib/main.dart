@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'dart:io' show Platform;
 import 'core/theme/app_theme.dart';
 import 'data/repositories/inventory_repository.dart';
 import 'data/repositories/recipe_repository.dart';
@@ -37,11 +38,12 @@ void main() {
   if (kIsWeb) {
     // Web Initialization
     databaseFactory = databaseFactoryFfiWeb;
-  } else {
-    // Desktop Initialization (Windows/Linux/Mac)
+  } else if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    // Desktop Initialization (Windows/Linux/Mac) - requires FFI
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
   }
+  // For Android/iOS, sqflite works natively - no initialization needed
 
   runApp(const PantryPalApp());
 }
@@ -125,25 +127,8 @@ class PantryPalApp extends StatelessWidget {
                 ),
               ),
               themeMode: settingsState.themeMode,
-              home: BlocBuilder<AuthBloc, AuthState>(
-                builder: (context, authState) {
-                  print(
-                    'Main: BlocBuilder rebuilding with status ${authState.status}',
-                  );
-                  switch (authState.status) {
-                    case AuthStatus.authenticated:
-                      return const HomeScreen();
-                    case AuthStatus.firstLaunch:
-                      return const WelcomeScreen();
-                    case AuthStatus.unauthenticated:
-                    case AuthStatus.error:
-                    case AuthStatus.loading:
-                      return const LoginScreen();
-                    case AuthStatus.unknown:
-                      return const SplashScreen();
-                  }
-                },
-              ),
+              // Use SplashScreen as initial home - it handles the auth check and navigation
+              home: const _AuthGate(),
               routes: {
                 '/welcome': (_) => const WelcomeScreen(),
                 '/home': (_) => const HomeScreen(),
@@ -154,6 +139,53 @@ class PantryPalApp extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+/// A gate widget that listens to auth state changes and navigates accordingly.
+/// Uses BlocListener instead of BlocBuilder to avoid rebuilding and overriding
+/// any navigation that has already occurred (e.g., from welcome to login screen).
+class _AuthGate extends StatefulWidget {
+  const _AuthGate();
+
+  @override
+  State<_AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<_AuthGate> {
+  bool _hasNavigated = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        // Only navigate if we haven't already navigated from this gate
+        if (_hasNavigated) return;
+
+        switch (state.status) {
+          case AuthStatus.authenticated:
+            _hasNavigated = true;
+            Navigator.of(
+              context,
+            ).pushNamedAndRemoveUntil('/home', (route) => false);
+            break;
+          case AuthStatus.firstLaunch:
+            _hasNavigated = true;
+            Navigator.of(context).pushReplacementNamed('/welcome');
+            break;
+          case AuthStatus.unauthenticated:
+          case AuthStatus.error:
+            _hasNavigated = true;
+            Navigator.of(context).pushReplacementNamed('/login');
+            break;
+          case AuthStatus.unknown:
+          case AuthStatus.loading:
+            // Stay on splash screen
+            break;
+        }
+      },
+      child: const SplashScreen(),
     );
   }
 }

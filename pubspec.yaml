@@ -59,6 +59,15 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   bloc_test: ^10.0.0
+  flutter_launcher_icons: ^0.14.3
+
+# Launcher icon configuration
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/app_icon.png"
+  adaptive_icon_background: "#4CAF50"
+  adaptive_icon_foreground: "assets/images/app_icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -73,6 +82,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/categories/
+    - assets/images/hero_splash.jpg
+    - assets/images/default_avatar.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

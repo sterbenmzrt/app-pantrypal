@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/models/inventory_item.dart';
 import '../../core/utils/date_helpers.dart';
+import '../../core/utils/number_helpers.dart';
 
 class InventoryItemCard extends StatelessWidget {
   final InventoryItem item;
@@ -9,13 +10,14 @@ class InventoryItemCard extends StatelessWidget {
 
   // Map categories to asset images
   static const Map<String, String> _categoryImages = {
-    'Pantry': 'assets/images/categories/pantry.png',
-    'Fridge': 'assets/images/categories/fridge.png',
-    'Freezer': 'assets/images/categories/freezer.png',
-    'Vegetables': 'assets/images/categories/vegetables.png',
     'Dairy': 'assets/images/categories/dairy.png',
-    'Meat': 'assets/images/categories/meat.png',
-    'Spices': 'assets/images/categories/spices.png',
+    'Meat & Protein': 'assets/images/categories/meat_protein.png',
+    'Vegetables': 'assets/images/categories/vegetables.png',
+    'Fruits': 'assets/images/categories/fruits.png',
+    'Spices & Seasonings': 'assets/images/categories/spices_seasonings.png',
+    'Pantry / Dry Goods': 'assets/images/categories/pantry_dry_goods.png',
+    'Beverages': 'assets/images/categories/beverages.png',
+    'Freezer': 'assets/images/categories/freezer.png',
     'Other': 'assets/images/categories/other.png',
   };
 
@@ -66,7 +68,7 @@ class InventoryItemCard extends StatelessWidget {
           children: [
             const SizedBox(height: 4),
             Text(
-              "${item.quantity} ${item.unit} • ${item.category}",
+              "${NumberHelpers.formatQuantity(item.quantity)} ${item.unit} • ${item.category}",
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 4),

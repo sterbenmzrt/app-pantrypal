@@ -26,15 +26,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const heroImage =
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuAeCanGJs2IS1T4L2ahcHGZWjd9ovCE-NC4_OVn75yYDDqGq4luQsLOkaNS42unPTy9tzIYVQEz_izeilmz9M8M6keJMw6mNKYWr_SXNUFqi6YbnKZ1GoRfAKU191IgNTmrHKaXknV56cBBUIWc-gaiSCyElO5JnW5t1GoNzYglABZaElAje1SQ6IuRw7lpdMTDW5TrO8AEz1bRYJaeJzn6K8_B4ywjJ9rCzipEbfH6NWXh9L9bNIsjJqnRDXn-DR3BJTKXtm4lgQ';
-
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
           // Background hero visual from the provided design.
-          Image.network(heroImage, fit: BoxFit.cover),
+          Image.asset('assets/images/hero_splash.jpg', fit: BoxFit.cover),
           // Soft overlay to keep text legible.
           Container(
             decoration: const BoxDecoration(
@@ -99,7 +96,9 @@ class _SplashScreenState extends State<SplashScreen> {
                     width: 56,
                     height: 56,
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFF4CAF50),
+                      ),
                       strokeWidth: 5,
                     ),
                   ),

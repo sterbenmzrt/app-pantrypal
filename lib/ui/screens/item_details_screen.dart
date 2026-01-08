@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/inventory_item.dart';
 import '../../logic/inventory/inventory_bloc.dart';
 import '../../logic/inventory/inventory_event.dart';
+import '../../core/utils/number_helpers.dart';
 
 class ItemDetailsScreen extends StatelessWidget {
   final InventoryItem item;
@@ -10,13 +11,14 @@ class ItemDetailsScreen extends StatelessWidget {
 
   // Map categories to asset images
   static const Map<String, String> _categoryImages = {
-    'Pantry': 'assets/images/categories/pantry.png',
-    'Fridge': 'assets/images/categories/fridge.png',
-    'Freezer': 'assets/images/categories/freezer.png',
-    'Vegetables': 'assets/images/categories/vegetables.png',
     'Dairy': 'assets/images/categories/dairy.png',
-    'Meat': 'assets/images/categories/meat.png',
-    'Spices': 'assets/images/categories/spices.png',
+    'Meat & Protein': 'assets/images/categories/meat_protein.png',
+    'Vegetables': 'assets/images/categories/vegetables.png',
+    'Fruits': 'assets/images/categories/fruits.png',
+    'Spices & Seasonings': 'assets/images/categories/spices_seasonings.png',
+    'Pantry / Dry Goods': 'assets/images/categories/pantry_dry_goods.png',
+    'Beverages': 'assets/images/categories/beverages.png',
+    'Freezer': 'assets/images/categories/freezer.png',
     'Other': 'assets/images/categories/other.png',
   };
 
@@ -131,7 +133,8 @@ class ItemDetailsScreen extends StatelessWidget {
                     context,
                     icon: Icons.inventory_2_outlined,
                     label: 'Quantity',
-                    value: '${item.quantity} ${item.unit}',
+                    value:
+                        '${NumberHelpers.formatQuantity(item.quantity)} ${item.unit}',
                   ),
                   const SizedBox(height: 12),
                   _buildInfoCard(

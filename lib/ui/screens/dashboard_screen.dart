@@ -5,6 +5,7 @@ import '../../logic/inventory/inventory_state.dart';
 import '../../logic/user/user_bloc.dart';
 import '../../logic/user/user_state.dart';
 import '../../data/models/inventory_item.dart';
+import '../../core/utils/number_helpers.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -126,7 +127,9 @@ class DashboardScreen extends StatelessWidget {
                       subtitle: Text(
                         'Exp: ${item.expiryDate.toString().split(' ')[0]}',
                       ),
-                      trailing: Text('${item.quantity} ${item.unit}'),
+                      trailing: Text(
+                        '${NumberHelpers.formatQuantity(item.quantity)} ${item.unit}',
+                      ),
                     ),
                   ),
                 ),

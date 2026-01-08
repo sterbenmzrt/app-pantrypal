@@ -60,9 +60,9 @@ class ShoppingListTable {
   static const String createTableQuery = '''
     CREATE TABLE $tableName(
       $colId TEXT PRIMARY KEY,
-      $colListId TEXT,
+      $colListId TEXT NOT NULL,
       $colName TEXT,
-      $colIsChecked INTEGER,
+      $colIsChecked INTEGER DEFAULT 0,
       $colCategory TEXT
     )
   ''';
