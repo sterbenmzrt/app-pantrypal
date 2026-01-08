@@ -26,10 +26,33 @@ class InventoryTable {
   ''';
 }
 
+class ShoppingListsTable {
+  static const String tableName = 'shopping_lists';
+
+  static const String colId = 'id';
+  static const String colTitle = 'title';
+  static const String colShoppingDate = 'shoppingDate';
+  static const String colCreatedAt = 'createdAt';
+  static const String colIsArchived = 'isArchived';
+  static const String colArchivedAt = 'archivedAt';
+
+  static const String createTableQuery = '''
+    CREATE TABLE $tableName(
+      $colId TEXT PRIMARY KEY,
+      $colTitle TEXT,
+      $colShoppingDate TEXT,
+      $colCreatedAt TEXT,
+      $colIsArchived INTEGER DEFAULT 0,
+      $colArchivedAt TEXT
+    )
+  ''';
+}
+
 class ShoppingListTable {
   static const String tableName = 'shopping_list';
 
   static const String colId = 'id';
+  static const String colListId = 'listId';
   static const String colName = 'name';
   static const String colIsChecked = 'isChecked';
   static const String colCategory = 'category';
@@ -37,6 +60,7 @@ class ShoppingListTable {
   static const String createTableQuery = '''
     CREATE TABLE $tableName(
       $colId TEXT PRIMARY KEY,
+      $colListId TEXT,
       $colName TEXT,
       $colIsChecked INTEGER,
       $colCategory TEXT

@@ -77,9 +77,19 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 32),
 
           _buildSectionTitle(context, 'Account'),
-          _buildSectionContainer(context, [
-            _buildListTile(context, 'Personal Information', Icons.person),
-          ]),
+          BlocBuilder<UserBloc, UserState>(
+            builder: (context, userState) {
+              return _buildSectionContainer(context, [
+                _buildListTile(
+                  context,
+                  'Personal Information',
+                  Icons.person,
+                  onTap:
+                      () => _showPersonalInfoPopup(context, userState.profile),
+                ),
+              ]);
+            },
+          ),
 
           _buildSectionTitle(context, 'App Settings'),
           _buildSectionContainer(context, [
@@ -146,6 +156,7 @@ class ProfileScreen extends StatelessWidget {
     String title,
     IconData icon, {
     Widget? trailing,
+    VoidCallback? onTap,
   }) {
     return ListTile(
       leading: Container(
@@ -164,11 +175,13 @@ class ProfileScreen extends StatelessWidget {
           const Icon(Icons.chevron_right, color: Colors.grey),
         ],
       ),
-      onTap: () {
-        if (title == 'Theme') {
-          _showThemeSelector(context);
-        }
-      },
+      onTap:
+          onTap ??
+          () {
+            if (title == 'Theme') {
+              _showThemeSelector(context);
+            }
+          },
     );
   }
 
@@ -259,6 +272,143 @@ class ProfileScreen extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  void _showPersonalInfoPopup(BuildContext context, dynamic user) {
+    final theme = Theme.of(context);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: theme.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.person, color: theme.primaryColor),
+              ),
+              const SizedBox(width: 12),
+              const Text('Personal Information'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Profile Image
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image:
+                        user.profileImage != null &&
+                                user.profileImage!.isNotEmpty
+                            ? NetworkImage(user.profileImage!)
+                            : const NetworkImage(
+                              'https://lh3.googleusercontent.com/aida-public/AB6AXuDcXm9c_-O7N4H5C0XltaEsuYkAeSowAeqOdRcp_rqlIFARGzXwadNA4AJAUdMmprS8n7GZQirvIcX7XtLGBq5_QoXsm3M3eem7_FNBWrQOj6tzy-PPvmR2ZFA-aHYRiZ30Ev1qjCnkueyItslEHyUVR5o2Gu3XhKhKMbo9srNkJEPgLICecuwI9120513mE1gv6QqlewdX4MlCT6JkSW6Gsd0Ioh_QG98zKaeLeCRwtwSrhfI5ai5xzPlCtmDoQ5ZzI_jeNgJqGw',
+                            ),
+                    fit: BoxFit.cover,
+                  ),
+                  color: Colors.grey[300],
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Info Items
+              _buildInfoRow(
+                context,
+                'Full Name',
+                user.name.isEmpty ? 'Not set' : user.name,
+                Icons.badge,
+              ),
+              const Divider(height: 1),
+              _buildInfoRow(
+                context,
+                'Email',
+                user.email.isEmpty ? 'Not set' : user.email,
+                Icons.email,
+              ),
+              const Divider(height: 1),
+              _buildInfoRow(
+                context,
+                'User ID',
+                user.id?.toString() ?? 'N/A',
+                Icons.fingerprint,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _showEditProfileDialog(context, user);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.primaryColor,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Edit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoRow(
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+  ) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: theme.primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, size: 20, color: theme.primaryColor),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

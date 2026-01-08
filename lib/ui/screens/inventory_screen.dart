@@ -126,7 +126,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
         },
         label: const Text("Add Item"),
         icon: const Icon(Icons.add),
-        backgroundColor: Theme.of(context).primaryColor,
       ),
     );
   }

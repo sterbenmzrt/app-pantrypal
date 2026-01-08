@@ -1,12 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/auth_repository.dart';
+import '../../data/repositories/settings_repository.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
+  final SettingsRepository settingsRepository;
 
-  AuthBloc({required this.authRepository}) : super(const AuthState.unknown()) {
+  AuthBloc({required this.authRepository, required this.settingsRepository})
+    : super(const AuthState.unknown()) {
     on<LoginRequested>(_onLoginRequested);
     on<SignUpRequested>(_onSignUpRequested);
     on<LogoutRequested>(_onLogoutRequested);
@@ -22,9 +25,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     CheckAuthStatus event,
     Emitter<AuthState> emit,
   ) async {
-    // Check for persisted session (for now, default to unauthenticated)
-    // In the future, check shared_preferences for saved token/session
-    emit(const AuthState.unauthenticated());
+    // Check if this is the first time the app is launched
+    final isFirstLaunch = await settingsRepository.isFirstLaunch();
+
+    if (isFirstLaunch) {
+      // First time user - show welcome screen
+      emit(const AuthState.firstLaunch());
+    } else {
+      // Returning user - go to login
+      emit(const AuthState.unauthenticated());
+    }
   }
 
   Future<void> _onLoginRequested(
@@ -36,6 +46,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await authRepository.login(event.email, event.password);
       if (user != null) {
+        // Mark first launch as completed when user logs in
+        await settingsRepository.markFirstLaunchCompleted();
         print('AuthBloc: Login successful for ${user.email}');
         emit(AuthState.authenticated(user));
       } else {
@@ -55,6 +67,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     print('AuthBloc: SignUp requested for ${event.email}');
     emit(const AuthState.loading());
     try {
+      // Mark first launch as completed when user signs up
+      await settingsRepository.markFirstLaunchCompleted();
+
       final user = await authRepository.signUp(
         event.name,
         event.email,

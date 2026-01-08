@@ -17,7 +17,7 @@ import 'package:pantry_pal/logic/settings/settings_event.dart';
 import 'package:pantry_pal/logic/settings/settings_state.dart';
 import 'package:pantry_pal/logic/shopping/shopping_bloc.dart';
 import 'package:pantry_pal/logic/shopping/shopping_event.dart';
-import 'package:pantry_pal/data/repositories/shopping_repository.dart';
+import 'package:pantry_pal/data/repositories/shopping_list_repository.dart';
 import 'package:pantry_pal/logic/user/user_bloc.dart';
 import 'package:pantry_pal/logic/user/user_event.dart';
 import 'package:pantry_pal/data/repositories/user_repository.dart';
@@ -71,8 +71,8 @@ class PantryPalApp extends StatelessWidget {
         BlocProvider<ShoppingBloc>(
           create:
               (context) =>
-                  ShoppingBloc(repository: ShoppingRepository())
-                    ..add(LoadShoppingList()),
+                  ShoppingBloc(repository: ShoppingListRepository())
+                    ..add(LoadShoppingLists()),
         ),
         BlocProvider<UserBloc>(
           create:
@@ -81,7 +81,11 @@ class PantryPalApp extends StatelessWidget {
                     ..add(LoadUserProfile()),
         ),
         BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc(authRepository: AuthRepository()),
+          create:
+              (context) => AuthBloc(
+                authRepository: AuthRepository(),
+                settingsRepository: SettingsRepository(),
+              ),
         ),
       ],
       child: BlocListener<AuthBloc, AuthState>(
@@ -90,12 +94,18 @@ class PantryPalApp extends StatelessWidget {
           return previous.status == AuthStatus.authenticated &&
               current.status == AuthStatus.unauthenticated;
         },
-        listener: (context, authState) {
+        listener: (context, authState) async {
           print(
             'Main: Auth listener - User logged out, clearing data and navigating to login',
           );
+          // Clear all user-specific data on logout
+          await DatabaseHelper().clearAllUserData();
           // Clear user profile data on logout
           context.read<UserBloc>().add(ClearUserProfile());
+          // Clear shopping list state
+          context.read<ShoppingBloc>().add(LoadShoppingLists());
+          // Clear inventory state
+          context.read<InventoryBloc>().add(LoadInventory());
           // Use the global navigator key to navigate
           navigatorKey.currentState?.pushNamedAndRemoveUntil(
             '/login',
@@ -123,6 +133,8 @@ class PantryPalApp extends StatelessWidget {
                   switch (authState.status) {
                     case AuthStatus.authenticated:
                       return const HomeScreen();
+                    case AuthStatus.firstLaunch:
+                      return const WelcomeScreen();
                     case AuthStatus.unauthenticated:
                     case AuthStatus.error:
                     case AuthStatus.loading:

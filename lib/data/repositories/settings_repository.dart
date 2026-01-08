@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class SettingsRepository {
   static const String _themeKey = 'theme_mode';
+  static const String _firstLaunchKey = 'first_launch_completed';
 
   Future<void> saveThemeMode(ThemeMode mode) async {
     final prefs = await SharedPreferences.getInstance();
@@ -16,5 +17,17 @@ class SettingsRepository {
       return ThemeMode.values[index];
     }
     return ThemeMode.light; // Default
+  }
+
+  /// Check if this is the first time the app is launched
+  Future<bool> isFirstLaunch() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_firstLaunchKey) != true;
+  }
+
+  /// Mark that the first launch has been completed (user has seen welcome screen)
+  Future<void> markFirstLaunchCompleted() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_firstLaunchKey, true);
   }
 }

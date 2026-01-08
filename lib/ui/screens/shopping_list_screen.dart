@@ -1,54 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:uuid/uuid.dart';
+import 'package:intl/intl.dart';
 import '../../logic/shopping/shopping_bloc.dart';
 import '../../logic/shopping/shopping_event.dart';
 import '../../logic/shopping/shopping_state.dart';
-import '../../data/models/shopping_item.dart';
+import '../../data/models/shopping_list.dart';
+import 'create_shopping_list_screen.dart';
+import 'shopping_list_detail_screen.dart';
 
 class ShoppingListScreen extends StatelessWidget {
   const ShoppingListScreen({Key? key}) : super(key: key);
 
-  void _showAddItemDialog(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
+  void _showDeleteConfirmation(BuildContext context, ShoppingList list) {
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Add Shopping Item'),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(hintText: 'Item Name'),
-            autofocus: true,
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Delete Shopping List'),
+            content: Text(
+              'Are you sure you want to delete "${list.title}"? This will also delete all items in this list.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  context.read<ShoppingBloc>().add(DeleteShoppingList(list.id));
+                  Navigator.pop(ctx);
+                },
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ),
+                child: const Text('Delete'),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+    );
+  }
+
+  void _showArchiveConfirmation(BuildContext context, ShoppingList list) {
+    showDialog(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Archive Shopping List'),
+            content: Text(
+              'Archive "${list.title}"? It will be permanently deleted after 7 days.',
             ),
-            ElevatedButton(
-              onPressed: () {
-                final text = controller.text.trim();
-                if (text.isNotEmpty) {
-                  final newItem = ShoppingItem(
-                    id: const Uuid().v4(),
-                    name: text,
-                    category: 'Uncategorized',
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  context.read<ShoppingBloc>().add(
+                    ArchiveShoppingList(list.id),
                   );
-                  context.read<ShoppingBloc>().add(AddShoppingItem(newItem));
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('Add'),
-            ),
-          ],
-        );
-      },
+                  Navigator.pop(ctx);
+                },
+                child: const Text('Archive'),
+              ),
+            ],
+          ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       body: BlocBuilder<ShoppingBloc, ShoppingState>(
         builder: (context, state) {
@@ -59,157 +83,250 @@ class ShoppingListScreen extends StatelessWidget {
             return Center(child: Text('Error: ${state.errorMessage}'));
           }
 
-          // Segregate items (example logic, simplified)
-          // For now, we'll keep the "Suggested" static as a mockup/placeholder
-          // and use "Your List" for the actual database items.
-          final yourList = state.items;
+          final lists = state.shoppingLists;
 
-          return ListView(
-            padding: const EdgeInsets.only(bottom: 80),
-            children: [
-              const _SectionTitle('Your List'),
-              if (yourList.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text('Your list is empty. Add items!'),
-                )
-              else
-                _CategoryCard(
-                  title: 'My Items',
-                  items:
-                      yourList.map((item) => _CheckItem(item: item)).toList(),
-                ),
-            ],
+          if (lists.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 80,
+                    color: colorScheme.onSurfaceVariant.withOpacity(0.5),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'No Shopping Lists',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Create your first shopping list to get started',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  FilledButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => const CreateShoppingListScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('Create Shopping List'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: () async {
+              context.read<ShoppingBloc>().add(LoadShoppingLists());
+            },
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: lists.length,
+              itemBuilder: (context, index) {
+                final list = lists[index];
+                final itemCount = state.itemCounts[list.id] ?? 0;
+                final checkedCount = state.checkedCounts[list.id] ?? 0;
+                final progress =
+                    itemCount == 0 ? 0.0 : checkedCount / itemCount;
+                final isCompleted = itemCount > 0 && checkedCount == itemCount;
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    ShoppingListDetailScreen(listId: list.id),
+                          ),
+                        ).then((_) {
+                          // Refresh the list when returning from detail screen
+                          context.read<ShoppingBloc>().add(LoadShoppingLists());
+                        });
+                      },
+                      onLongPress: () => _showDeleteConfirmation(context, list),
+                      borderRadius: BorderRadius.circular(16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        isCompleted
+                                            ? Colors.green.withOpacity(0.1)
+                                            : colorScheme.primaryContainer,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Icon(
+                                    isCompleted
+                                        ? Icons.check_circle
+                                        : Icons.shopping_cart_outlined,
+                                    color:
+                                        isCompleted
+                                            ? Colors.green
+                                            : colorScheme.onPrimaryContainer,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        list.title,
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.calendar_today,
+                                            size: 14,
+                                            color: colorScheme.onSurfaceVariant,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            DateFormat(
+                                              'MMM d, y',
+                                            ).format(list.shoppingDate),
+                                            style: theme.textTheme.bodySmall
+                                                ?.copyWith(
+                                                  color:
+                                                      colorScheme
+                                                          .onSurfaceVariant,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed:
+                                      () =>
+                                          isCompleted
+                                              ? _showArchiveConfirmation(
+                                                context,
+                                                list,
+                                              )
+                                              : _showDeleteConfirmation(
+                                                context,
+                                                list,
+                                              ),
+                                  icon: Icon(
+                                    isCompleted
+                                        ? Icons.archive_outlined
+                                        : Icons.delete_outline,
+                                    color:
+                                        isCompleted
+                                            ? colorScheme.primary
+                                            : colorScheme.error,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  itemCount == 0
+                                      ? 'No items'
+                                      : '$checkedCount / $itemCount items',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                                if (isCompleted)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.green.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Text(
+                                      'Completed',
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            if (itemCount > 0) ...[
+                              const SizedBox(height: 8),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: LinearProgressIndicator(
+                                  value: progress,
+                                  minHeight: 6,
+                                  backgroundColor:
+                                      colorScheme.surfaceContainerHighest,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    isCompleted
+                                        ? Colors.green
+                                        : colorScheme.primary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddItemDialog(context),
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  final String title;
-  const _SectionTitle(this.title);
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-      child: Text(
-        title,
-        style: Theme.of(
-          context,
-        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
-class _CategoryCard extends StatelessWidget {
-  final String title;
-  final List<Widget> items;
-  const _CategoryCard({required this.title, required this.items});
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-                child: Text(
-                  title.toUpperCase(),
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
-              for (final item in items) ...[const Divider(height: 1), item],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CheckItem extends StatelessWidget {
-  final ShoppingItem item;
-
-  const _CheckItem({required this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: Row(
-        children: [
-          Checkbox(
-            value: item.isChecked,
-            onChanged: (_) {
-              context.read<ShoppingBloc>().add(ToggleShoppingItem(item));
-            },
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.name,
-                  style: TextStyle(
-                    decoration:
-                        item.isChecked ? TextDecoration.lineThrough : null,
-                    color: item.isChecked ? Colors.grey : null,
-                  ),
-                ),
-              ],
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CreateShoppingListScreen(),
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete, size: 20, color: Colors.grey),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder:
-                    (ctx) => AlertDialog(
-                      title: const Text('Delete Item'),
-                      content: Text(
-                        'Remove "${item.name}" from your shopping list?',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx),
-                          child: const Text('Cancel'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            context.read<ShoppingBloc>().add(
-                              DeleteShoppingItem(item.id),
-                            );
-                            Navigator.pop(ctx);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: const Text('Delete'),
-                        ),
-                      ],
-                    ),
-              );
-            },
-          ),
-        ],
+          ).then((_) {
+            context.read<ShoppingBloc>().add(LoadShoppingLists());
+          });
+        },
+        icon: const Icon(Icons.add),
+        label: const Text('New List'),
       ),
     );
   }

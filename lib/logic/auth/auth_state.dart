@@ -1,7 +1,14 @@
 import 'package:equatable/equatable.dart';
 import '../../data/models/user_profile.dart';
 
-enum AuthStatus { unknown, authenticated, unauthenticated, loading, error }
+enum AuthStatus {
+  unknown,
+  authenticated,
+  unauthenticated,
+  loading,
+  error,
+  firstLaunch,
+}
 
 class AuthState extends Equatable {
   final AuthStatus status;
@@ -26,6 +33,8 @@ class AuthState extends Equatable {
 
   const AuthState.error(String message)
     : this._(status: AuthStatus.error, errorMessage: message);
+
+  const AuthState.firstLaunch() : this._(status: AuthStatus.firstLaunch);
 
   @override
   List<Object?> get props => [status, user, errorMessage];

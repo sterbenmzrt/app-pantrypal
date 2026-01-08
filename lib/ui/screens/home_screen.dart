@@ -4,9 +4,10 @@ import 'inventory_screen.dart';
 import 'profile_screen.dart';
 import 'recipe_search_screen.dart';
 import 'shopping_list_screen.dart';
+import 'archived_shopping_lists_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -22,6 +23,15 @@ class _HomeScreenState extends State<HomeScreen> {
     const ShoppingListScreen(),
     const ProfileScreen(),
   ];
+
+  void _navigateToArchive() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ArchivedShoppingListsScreen(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +49,15 @@ class _HomeScreenState extends State<HomeScreen> {
           titles[_currentIndex],
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
+        actions: [
+          // Show archive icon only on Shopping List tab (index 3)
+          if (_currentIndex == 3)
+            IconButton(
+              onPressed: _navigateToArchive,
+              icon: const Icon(Icons.archive_outlined),
+              tooltip: 'Archived Lists',
+            ),
+        ],
       ),
       body: _screens[_currentIndex],
       bottomNavigationBar: NavigationBar(

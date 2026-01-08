@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../logic/inventory/inventory_bloc.dart';
 import '../../logic/inventory/inventory_state.dart';
+import '../../logic/user/user_bloc.dart';
+import '../../logic/user/user_state.dart';
 import '../../data/models/inventory_item.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -36,12 +38,20 @@ class DashboardScreen extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              Text(
-                'Good Morning,',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColor,
-                ),
+              BlocBuilder<UserBloc, UserState>(
+                builder: (context, userState) {
+                  final userName =
+                      userState.profile.name.isNotEmpty
+                          ? userState.profile.name
+                          : 'User';
+                  return Text(
+                    'Hi, $userName',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 8),
               Text(
@@ -87,7 +97,7 @@ class DashboardScreen extends StatelessWidget {
                   Expanded(
                     child: _SummaryCard(
                       title: 'Recipes',
-                      value: '12',
+                      value: '0',
                       icon: Icons.menu_book,
                       color: Colors.green,
                     ),
