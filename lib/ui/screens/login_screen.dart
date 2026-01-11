@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../core/utils/security_utils.dart';
 import '../../logic/auth/auth_bloc.dart';
 import '../../logic/auth/auth_event.dart';
 import '../../logic/auth/auth_state.dart';
@@ -93,11 +94,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         fillColor: Colors.grey[50],
                       ),
                       keyboardType: TextInputType.emailAddress,
-                      validator:
-                          (v) =>
-                              v == null || v.isEmpty
-                                  ? 'Please enter your email'
-                                  : null,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        final email = SecurityUtils.sanitizeInput(v);
+                        if (!SecurityUtils.isValidEmail(email)) {
+                          return 'Please enter a valid email address';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16),
 
@@ -127,11 +133,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         fillColor: Colors.grey[50],
                       ),
                       obscureText: _obscurePassword,
-                      validator:
-                          (v) =>
-                              v == null || v.length < 6
-                                  ? 'Minimum 6 characters'
-                                  : null,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        if (v.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 32),
 

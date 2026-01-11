@@ -5,6 +5,7 @@ import '../models/inventory_item.dart';
 import '../models/shopping_item.dart';
 import '../models/shopping_list.dart';
 import '../models/user_profile.dart';
+import '../../core/utils/security_utils.dart';
 import 'schema.dart';
 
 class DatabaseHelper {
@@ -390,28 +391,32 @@ class DatabaseHelper {
   }
 
   Future<UserProfile?> authenticateUser(String email, String password) async {
-    print('DB: Authenticating user $email');
     final db = await database;
     try {
+      // Get user by email first
       final List<Map<String, dynamic>> maps = await db.query(
         UserTable.tableName,
-        where: '${UserTable.colEmail} = ? AND ${UserTable.colPassword} = ?',
-        whereArgs: [email, password],
+        where: '${UserTable.colEmail} = ?',
+        whereArgs: [email],
       );
-      print('DB: Auth query found ${maps.length} results');
+
       if (maps.isNotEmpty) {
-        return UserProfile.fromMap(maps.first);
+        final storedHash = maps.first[UserTable.colPassword] as String?;
+        if (storedHash != null &&
+            SecurityUtils.verifyPassword(password, storedHash)) {
+          return UserProfile.fromMap(maps.first);
+        }
       }
       return null;
     } catch (e) {
-      print('DB: Auth error: $e');
+      // Log error without exposing sensitive data
+      debugPrint('Authentication failed');
       rethrow;
     }
   }
 
   Future<UserProfile?> getUserByEmail(String email) async {
     final db = await database;
-    print('DB: Checking email $email');
     final List<Map<String, dynamic>> maps = await db.query(
       UserTable.tableName,
       where: '${UserTable.colEmail} = ?',
@@ -424,24 +429,29 @@ class DatabaseHelper {
   }
 
   Future<UserProfile> registerUser(UserProfile user) async {
-    print('DB: Registering user ${user.email}');
     final db = await database;
 
     // Check if email already exists
     final existing = await getUserByEmail(user.email);
     if (existing != null) {
-      print('DB: Email already exists');
       throw Exception('Email already registered');
     }
 
     try {
-      // Insert new user
-      final id = await db.insert(UserTable.tableName, user.toMap());
-      print('DB: User registered with ID $id');
+      // Hash the password before storing
+      final hashedPassword = SecurityUtils.hashPassword(user.password ?? '');
+      final userWithHashedPassword = user.copyWith(password: hashedPassword);
 
-      return user.copyWith(id: id);
+      // Insert new user with hashed password
+      final id = await db.insert(
+        UserTable.tableName,
+        userWithHashedPassword.toMap(),
+      );
+
+      // Return user without password for security
+      return user.copyWith(id: id, password: null);
     } catch (e) {
-      print('DB: Registration error: $e');
+      debugPrint('Registration failed');
       rethrow;
     }
   }

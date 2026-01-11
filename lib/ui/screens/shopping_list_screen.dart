@@ -110,7 +110,7 @@ class ShoppingListScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  FilledButton.icon(
+                  ElevatedButton.icon(
                     onPressed: () {
                       Navigator.push(
                         context,

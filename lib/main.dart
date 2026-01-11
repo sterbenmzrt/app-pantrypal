@@ -97,9 +97,6 @@ class PantryPalApp extends StatelessWidget {
               current.status == AuthStatus.unauthenticated;
         },
         listener: (context, authState) async {
-          print(
-            'Main: Auth listener - User logged out, clearing data and navigating to login',
-          );
           // Clear all user-specific data on logout
           await DatabaseHelper().clearAllUserData();
           // Clear user profile data on logout

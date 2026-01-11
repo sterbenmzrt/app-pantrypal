@@ -46,22 +46,24 @@ class ItemDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Category Image Header
-            Container(
-              width: double.infinity,
-              height: 180,
-              decoration: BoxDecoration(
-                color: theme.primaryColor.withOpacity(0.1),
-              ),
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.contain,
-                errorBuilder:
-                    (context, error, stackTrace) => Icon(
-                      Icons.image_not_supported,
-                      size: 80,
-                      color: Colors.grey[400],
-                    ),
+            // Category Image Header - Full 1:1 Aspect Ratio
+            AspectRatio(
+              aspectRatio: 1, // 1:1 ratio
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: theme.primaryColor.withOpacity(0.1),
+                ),
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (context, error, stackTrace) => Icon(
+                        Icons.image_not_supported,
+                        size: 80,
+                        color: Colors.grey[400],
+                      ),
+                ),
               ),
             ),
 
@@ -153,41 +155,6 @@ class ItemDetailsScreen extends StatelessWidget {
                       value: item.notes!,
                     ),
                   ],
-
-                  const SizedBox(height: 32),
-
-                  // Action Buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(Icons.remove_circle_outline),
-                          label: const Text('Use Some'),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(Icons.add_circle_outline),
-                          label: const Text('Add More'),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),

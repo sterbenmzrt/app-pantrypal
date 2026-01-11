@@ -293,11 +293,11 @@ class _CreateShoppingListScreenState extends State<CreateShoppingListScreen> {
             const SizedBox(height: 24),
 
             // Save Button
-            FilledButton.icon(
+            ElevatedButton.icon(
               onPressed: _saveShoppingList,
               icon: const Icon(Icons.save),
               label: const Text('Create Shopping List'),
-              style: FilledButton.styleFrom(
+              style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

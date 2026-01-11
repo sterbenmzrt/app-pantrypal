@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../core/utils/security_utils.dart';
 import '../../logic/auth/auth_bloc.dart';
 import '../../logic/auth/auth_event.dart';
 import '../../logic/auth/auth_state.dart';
@@ -95,15 +96,19 @@ class _SignupScreenState extends State<SignupScreen> {
                         fillColor: Colors.grey[50],
                       ),
                       textCapitalization: TextCapitalization.words,
-                      validator:
-                          (v) =>
-                              v == null || v.isEmpty
-                                  ? 'Please enter your name'
-                                  : null,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Please enter your name';
+                        }
+                        final sanitized = SecurityUtils.sanitizeInput(v);
+                        if (sanitized.length < 2) {
+                          return 'Name must be at least 2 characters';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16),
 
-                    // Email Field
                     TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
@@ -118,10 +123,13 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (v) {
-                        if (v == null || v.isEmpty)
+                        if (v == null || v.isEmpty) {
                           return 'Please enter your email';
-                        if (!v.contains('@'))
-                          return 'Please enter a valid email';
+                        }
+                        final email = SecurityUtils.sanitizeInput(v);
+                        if (!SecurityUtils.isValidEmail(email)) {
+                          return 'Please enter a valid email address';
+                        }
                         return null;
                       },
                     ),
@@ -132,7 +140,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       controller: _passwordController,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        hintText: 'Create a password (min 6 chars)',
+                        hintText: 'Min 8 chars, uppercase, lowercase, number',
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -153,11 +161,12 @@ class _SignupScreenState extends State<SignupScreen> {
                         fillColor: Colors.grey[50],
                       ),
                       obscureText: _obscurePassword,
-                      validator:
-                          (v) =>
-                              v == null || v.length < 6
-                                  ? 'Minimum 6 characters'
-                                  : null,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Please enter a password';
+                        }
+                        return SecurityUtils.validatePasswordStrength(v);
+                      },
                     ),
                     const SizedBox(height: 32),
 

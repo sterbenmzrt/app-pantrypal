@@ -336,13 +336,6 @@ class ProfileScreen extends StatelessWidget {
                 user.email.isEmpty ? 'Not set' : user.email,
                 Icons.email,
               ),
-              const Divider(height: 1),
-              _buildInfoRow(
-                context,
-                'User ID',
-                user.id?.toString() ?? 'N/A',
-                Icons.fingerprint,
-              ),
             ],
           ),
           actions: [
@@ -415,7 +408,6 @@ class ProfileScreen extends StatelessWidget {
   void _showLogoutConfirmation(BuildContext context) {
     // Capture the AuthBloc reference before showing the dialog
     final authBloc = context.read<AuthBloc>();
-    print('Profile: AuthBloc captured: $authBloc');
 
     showDialog(
       context: context,
@@ -430,9 +422,6 @@ class ProfileScreen extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  print(
-                    'Profile: Logout button pressed, dispatching LogoutRequested',
-                  );
                   authBloc.add(LogoutRequested());
                   Navigator.pop(dialogContext);
                 },

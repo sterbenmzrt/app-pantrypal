@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../core/utils/rate_limiter.dart';
+import '../../core/utils/secure_session_manager.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../data/repositories/settings_repository.dart';
 import 'auth_event.dart';
@@ -7,9 +9,14 @@ import 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
   final SettingsRepository settingsRepository;
+  final SecureSessionManager _sessionManager;
 
-  AuthBloc({required this.authRepository, required this.settingsRepository})
-    : super(const AuthState.unknown()) {
+  AuthBloc({
+    required this.authRepository,
+    required this.settingsRepository,
+    SecureSessionManager? sessionManager,
+  }) : _sessionManager = sessionManager ?? SecureSessionManager(),
+       super(const AuthState.unknown()) {
     on<LoginRequested>(_onLoginRequested);
     on<SignUpRequested>(_onSignUpRequested);
     on<LogoutRequested>(_onLogoutRequested);
@@ -25,6 +32,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     CheckAuthStatus event,
     Emitter<AuthState> emit,
   ) async {
+    // First check for existing valid session
+    final existingSession = await _sessionManager.getSession();
+    if (existingSession != null) {
+      // User has a valid session, authenticate them
+      emit(AuthState.authenticated(existingSession));
+      return;
+    }
+
     // Check if this is the first time the app is launched
     final isFirstLaunch = await settingsRepository.isFirstLaunch();
 
@@ -41,22 +56,55 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     LoginRequested event,
     Emitter<AuthState> emit,
   ) async {
-    print('AuthBloc: Login requested for ${event.email}');
+    // Check rate limiting first
+    if (authRateLimiter.isLockedOut(event.email)) {
+      final remaining = authRateLimiter.getRemainingLockoutDuration(
+        event.email,
+      );
+      final minutes = remaining?.inMinutes ?? 15;
+      emit(
+        AuthState.error(
+          'Too many failed attempts. Please try again in $minutes minute${minutes == 1 ? '' : 's'}.',
+        ),
+      );
+      return;
+    }
+
     emit(const AuthState.loading());
     try {
       final user = await authRepository.login(event.email, event.password);
       if (user != null) {
+        // Clear rate limiting on successful login
+        authRateLimiter.clearAttempts(event.email);
+        // Save session securely
+        await _sessionManager.saveSession(user);
         // Mark first launch as completed when user logs in
         await settingsRepository.markFirstLaunchCompleted();
-        print('AuthBloc: Login successful for ${user.email}');
         emit(AuthState.authenticated(user));
       } else {
-        print('AuthBloc: Login failed - user not found or invalid password');
-        emit(const AuthState.error('Invalid email or password'));
+        // Record failed attempt
+        authRateLimiter.recordAttempt(event.email);
+        final remaining = authRateLimiter.getRemainingAttempts(event.email);
+
+        if (remaining > 0) {
+          emit(
+            AuthState.error(
+              'Invalid email or password. $remaining attempt${remaining == 1 ? '' : 's'} remaining.',
+            ),
+          );
+        } else {
+          emit(
+            const AuthState.error(
+              'Account temporarily locked. Please try again later.',
+            ),
+          );
+        }
       }
     } catch (e) {
-      print('AuthBloc: Login error: $e');
-      emit(AuthState.error(e.toString()));
+      // Record failed attempt for rate limiting
+      authRateLimiter.recordAttempt(event.email);
+      // Don't expose internal error details to users
+      emit(const AuthState.error('Login failed. Please try again.'));
     }
   }
 
@@ -64,7 +112,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     SignUpRequested event,
     Emitter<AuthState> emit,
   ) async {
-    print('AuthBloc: SignUp requested for ${event.email}');
     emit(const AuthState.loading());
     try {
       // Mark first launch as completed when user signs up
@@ -75,18 +122,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event.email,
         event.password,
       );
-      print('AuthBloc: SignUp successful for ${user.email}');
+
+      // Save session securely
+      await _sessionManager.saveSession(user);
       emit(AuthState.authenticated(user));
     } catch (e) {
-      print('AuthBloc: SignUp error: $e');
-      emit(AuthState.error(e.toString()));
+      // Check for specific error messages
+      final errorMessage = e.toString();
+      if (errorMessage.contains('Email already registered')) {
+        emit(const AuthState.error('This email is already registered'));
+      } else {
+        emit(const AuthState.error('Sign up failed. Please try again.'));
+      }
     }
   }
 
-  void _onLogoutRequested(LogoutRequested event, Emitter<AuthState> emit) {
-    print('AuthBloc: Logout requested');
-    authRepository.logout();
-    print('AuthBloc: Emitting unauthenticated state');
+  Future<void> _onLogoutRequested(
+    LogoutRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    // Clear secure session
+    await _sessionManager.clearSession();
+    await authRepository.logout();
     emit(const AuthState.unauthenticated());
   }
 }
