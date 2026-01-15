@@ -6,6 +6,7 @@ import '../../logic/inventory/inventory_state.dart';
 import '../../logic/recipe/recipe_bloc.dart';
 import '../../logic/recipe/recipe_event.dart';
 import '../../logic/recipe/recipe_state.dart';
+import 'recipe_details_screen.dart';
 
 class RecipeSearchScreen extends StatefulWidget {
   const RecipeSearchScreen({Key? key}) : super(key: key);
@@ -119,36 +120,111 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
                             index,
                           ) {
                             final recipe = state.recipes[index];
-                            return Card(
-                              clipBehavior: Clip.antiAlias,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Expanded(
-                                    child: CachedNetworkImage(
-                                      imageUrl: recipe.imageUrl,
-                                      fit: BoxFit.cover,
-                                      placeholder:
-                                          (context, url) => Container(
-                                            color: Colors.grey[200],
-                                          ),
-                                      errorWidget:
-                                          (context, url, error) =>
-                                              const Icon(Icons.error),
-                                    ),
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => RecipeDetailsScreen(
+                                          recipeId: recipe.id,
+                                          recipeTitle: recipe.title,
+                                          imageUrl: recipe.imageUrl,
+                                        ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      recipe.title,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
+                                );
+                              },
+                              child: Card(
+                                clipBehavior: Clip.antiAlias,
+                                elevation: 4,
+                                shadowColor: Colors.black26,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(
+                                      child: Hero(
+                                        tag: 'recipe_${recipe.id}',
+                                        child: CachedNetworkImage(
+                                          imageUrl: recipe.imageUrl,
+                                          fit: BoxFit.cover,
+                                          placeholder:
+                                              (context, url) => Container(
+                                                color: Colors.grey[200],
+                                                child: const Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        strokeWidth: 2,
+                                                      ),
+                                                ),
+                                              ),
+                                          errorWidget:
+                                              (context, url, error) =>
+                                                  Container(
+                                                    color: Colors.grey[200],
+                                                    child: const Icon(
+                                                      Icons.restaurant,
+                                                      size: 40,
+                                                    ),
+                                                  ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Theme.of(context).cardColor,
+                                            Theme.of(context).cardColor,
+                                          ],
+                                        ),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            recipe.title,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.touch_app,
+                                                size: 12,
+                                                color: Theme.of(
+                                                  context,
+                                                ).primaryColor.withOpacity(0.7),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                'Tap to view',
+                                                style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: Theme.of(context)
+                                                      .primaryColor
+                                                      .withOpacity(0.7),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           }, childCount: state.recipes.length),

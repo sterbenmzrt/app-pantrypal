@@ -1,26 +1,68 @@
 # PantryPal
 
-PantryPal is a smart inventory management application developed in Flutter. It helps users reduce food waste by tracking expiry dates and recommending recipes based on available ingredients.
+PantryPal is a smart pantry/kitchen inventory management application built with Flutter. It helps users reduce food waste by tracking expiry dates, recommending recipes based on available ingredients, and managing smart grocery lists.
 
-## Features (MVP)
+## Features
 
-1.  **Inventory Management**:
-    - **Dashboard**: A FIFO-sorted list of your pantry items with color-coded expiry indicators (Green: Safe, Yellow: Warning, Red: Critical).
-    - **Smart Entry**: Add items quickly with category chips that auto-suggest expiry dates.
-    - **Offline Support**: All inventory data is stored locally using SQLite.
-2.  **Recipe Generator**:
-    - **Ingredient Matching**: Select items from your pantry to find recipes (Powered by TheMealDB).
-    - **Search**: Manually search for recipes.
-3.  **Local Execution**: Designed to run seamlessly on your local machine (Windows/Android).
+### 🏠 Dashboard
+
+- **Pantry Overview**: Quick stats showing Total Items, Low Stock, Expiring Soon, and Fresh Items
+- **Clickable Stat Cards**: Navigate directly to filtered inventory views
+- **Expiring Soon Alert**: Visual warning with category images for items expiring within 3 days
+- **Quick Actions**: Fast navigation to Add Item, Grocery List, and Recipes
+
+### 📦 Inventory Management
+
+- **FIFO Sorting**: Items sorted by expiry date (First-In-First-Out)
+- **Color-Coded Indicators**:
+  - 🟢 Green = Safe (>6 days)
+  - 🟡 Yellow = Warning (3-6 days)
+  - 🔴 Red = Critical (<3 days)
+  - ⚪ Grey = Expired
+- **Smart Entry**: Category-based auto-suggest expiry dates
+- **Edit & Delete**: Full CRUD operations with confirmation dialogs
+- **Category Images**: Visual category icons for easy identification
+
+### 🍳 Recipe Generator
+
+- **Ingredient Matching**: Find recipes using pantry items (powered by TheMealDB API)
+- **Search Functionality**: Manual recipe search
+- **Detailed Instructions**: Step-by-step cooking instructions
+- **YouTube Integration**: Direct links to video tutorials
+
+### 🛒 Smart Grocery List
+
+- **Auto-Suggestions**: Based on low stock items (quantity ≤ 2)
+- **Category Organization**: Items grouped by category
+- **Check/Uncheck**: Track progress while shopping
+- **Shopping History**: Reuse completed lists (auto-deleted after 7 days)
+
+### 👤 Profile & Settings
+
+- **Personal Information**: View and manage user profile
+- **Theme Toggle**: Light/Dark mode support
+- **Secure Session**: Persistent login with session management
 
 ## Architecture
 
-The application follows the **MVVM (Model-View-ViewModel)** design pattern implemented using **BLoC (Business Logic Component)**.
+The application follows **MVVM (Model-View-ViewModel)** pattern implemented with **BLoC (Business Logic Component)**.
 
-- **Logic (ViewModel)**: `InventoryBloc`, `RecipeBloc`. Handles state changes and events.
-- **Data (Model)**: `InventoryItem`, `Recipe`.
-- **UI (View)**: Screens (`DashboardScreen`, `RecipeSearchScreen`, `AddItemScreen`) that consume states from BLoCs.
-- **Services**: `DatabaseHelper` (SQLite), `RecipeProvider` (Dio), `NotificationService`.
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        UI LAYER                             │
+│  Screens (Dashboard, Inventory, Recipes, Grocery, Profile)  │
+└─────────────────────────────────────────────────────────────┘
+                              ↓↑
+┌─────────────────────────────────────────────────────────────┐
+│                       LOGIC LAYER                           │
+│  BLoCs (Auth, Inventory, Recipe, Shopping, Settings, User)  │
+└─────────────────────────────────────────────────────────────┘
+                              ↓↑
+┌─────────────────────────────────────────────────────────────┐
+│                       DATA LAYER                            │
+│  Repositories → Database (SQLite) / API (TheMealDB)         │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ## Directory Structure
 
@@ -28,36 +70,86 @@ The application follows the **MVVM (Model-View-ViewModel)** design pattern imple
 lib/
 ├── main.dart                  # App Entry Point & Providers
 ├── core/
-│   ├── theme/                 # App Theme (Colors, Fonts)
-│   └── utils/                 # DateHelpers, Constants
+│   ├── theme/                 # App Theme (Colors, Typography)
+│   └── utils/                 # Date Helpers, Number Helpers
 ├── data/
-│   ├── models/                # Data Models
-│   ├── database/              # SQLite Helper
-│   ├── content/               # API Providers
-│   └── repositories/          # Repositories (Data Layer Abstraction)
+│   ├── models/                # Data Models (InventoryItem, ShoppingList, etc.)
+│   ├── database/              # SQLite Helper & Schema
+│   ├── content/               # API Providers (TheMealDB)
+│   └── repositories/          # Data Abstraction Layer
 ├── logic/
+│   ├── auth/                  # Authentication BLoC
 │   ├── inventory/             # Inventory BLoC
-│   └── recipe/                # Recipe BLoC
+│   ├── recipe/                # Recipe BLoC
+│   ├── shopping/              # Shopping List BLoC
+│   ├── settings/              # Settings BLoC
+│   └── user/                  # User Profile BLoC
 └── ui/
-    ├── screens/               # App Screens
+    ├── screens/               # All App Screens
     └── widgets/               # Reusable Widgets
 ```
 
 ## Setup & Running
 
-1.  **Prerequisites**: Flutter SDK installed.
-2.  **Dependencies**: Run `flutter pub get`.
-3.  **Run**:
-    ```bash
-    flutter run -d windows
-    ```
-    _Note: Ensure you have Visual Studio (C++) installed for Windows desktop development support._
+### Prerequisites
+
+- Flutter SDK 3.7.2+
+- Dart SDK
+- Visual Studio (C++) for Windows desktop
+
+### Installation
+
+```bash
+# Clone repository
+git clone <repository-url>
+cd pantry_pal
+
+# Install dependencies
+flutter pub get
+
+# Run on desired platform
+flutter run -d windows    # Windows
+flutter run -d chrome      # Web Browser
+flutter run -d android     # Android Device/Emulator
+```
 
 ## Tech Stack
 
-- **Flutter & Dart**: Core framework.
-- **flutter_bloc**: State management.
-- **sqflite_common_ffi**: Local database (Windows support).
-- **dio**: Network requests.
-- **cached_network_image**: Image caching.
-- **google_fonts**: Typography.
+| Technology                   | Purpose                      |
+| ---------------------------- | ---------------------------- |
+| Flutter & Dart               | Core framework               |
+| flutter_bloc                 | State management             |
+| sqflite / sqflite_common_ffi | Local SQLite database        |
+| dio                          | HTTP client for API          |
+| cached_network_image         | Image caching                |
+| google_fonts                 | Plus Jakarta Sans typography |
+| shared_preferences           | Key-value storage            |
+| url_launcher                 | External URL handling        |
+
+## Database Schema
+
+- **inventory** - Pantry items with expiry tracking
+- **shopping_lists** - Shopping list metadata
+- **shopping_list** - Individual shopping items
+- **user_profile** - User accounts
+- **active_session** - Login session management
+
+## Cross-Platform Support
+
+| Platform          | Status       |
+| ----------------- | ------------ |
+| Windows Desktop   | ✅ Supported |
+| Web (Chrome/Edge) | ✅ Supported |
+| Android           | ✅ Supported |
+| iOS               | ✅ Supported |
+| Linux             | ✅ Supported |
+| macOS             | ✅ Supported |
+
+## Screenshots
+
+_Available in `/docs/screenshots/`_
+
+---
+
+**Version:** 1.0.0  
+**Last Updated:** January 2026

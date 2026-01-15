@@ -35,6 +35,9 @@ import 'ui/screens/splash_screen.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
+  // CRITICAL: Must be called before using any plugins
+  WidgetsFlutterBinding.ensureInitialized();
+
   if (kIsWeb) {
     // Web Initialization
     databaseFactory = databaseFactoryFfiWeb;

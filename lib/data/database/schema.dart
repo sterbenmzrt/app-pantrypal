@@ -87,3 +87,29 @@ class UserTable {
     )
   ''';
 }
+
+/// Session table for storing active user session
+/// This is more reliable than SharedPreferences on some Android devices
+class SessionTable {
+  static const String tableName = 'active_session';
+
+  static const String colId = 'id';
+  static const String colUserId = 'userId';
+  static const String colUserName = 'userName';
+  static const String colUserEmail = 'userEmail';
+  static const String colProfileImage = 'profileImage';
+  static const String colExpiryDate = 'expiryDate';
+  static const String colCreatedAt = 'createdAt';
+
+  static const String createTableQuery = '''
+    CREATE TABLE $tableName(
+      $colId INTEGER PRIMARY KEY AUTOINCREMENT,
+      $colUserId INTEGER,
+      $colUserName TEXT,
+      $colUserEmail TEXT,
+      $colProfileImage TEXT,
+      $colExpiryDate TEXT,
+      $colCreatedAt TEXT
+    )
+  ''';
+}

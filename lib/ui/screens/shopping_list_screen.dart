@@ -45,9 +45,9 @@ class ShoppingListScreen extends StatelessWidget {
       context: context,
       builder:
           (ctx) => AlertDialog(
-            title: const Text('Archive Shopping List'),
+            title: const Text('Move to History'),
             content: Text(
-              'Archive "${list.title}"? It will be permanently deleted after 7 days.',
+              'Move "${list.title}" to history? It will be available for reuse and deleted after 7 days.',
             ),
             actions: [
               TextButton(
@@ -61,7 +61,7 @@ class ShoppingListScreen extends StatelessWidget {
                   );
                   Navigator.pop(ctx);
                 },
-                child: const Text('Archive'),
+                child: const Text('Move to History'),
               ),
             ],
           ),
@@ -243,7 +243,7 @@ class ShoppingListScreen extends StatelessWidget {
                                               ),
                                   icon: Icon(
                                     isCompleted
-                                        ? Icons.archive_outlined
+                                        ? Icons.history
                                         : Icons.delete_outline,
                                     color:
                                         isCompleted

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/utils/rate_limiter.dart';
 import '../../core/utils/secure_session_manager.dart';
@@ -32,16 +33,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     CheckAuthStatus event,
     Emitter<AuthState> emit,
   ) async {
+    debugPrint('AuthBloc: Checking auth status...');
+
     // First check for existing valid session
-    final existingSession = await _sessionManager.getSession();
-    if (existingSession != null) {
-      // User has a valid session, authenticate them
-      emit(AuthState.authenticated(existingSession));
-      return;
+    try {
+      final existingSession = await _sessionManager.getSession();
+      debugPrint(
+        'AuthBloc: Session check result: ${existingSession != null ? "found" : "not found"}',
+      );
+
+      if (existingSession != null) {
+        // User has a valid session, authenticate them
+        debugPrint(
+          'AuthBloc: Restoring session for user: ${existingSession.email}',
+        );
+        emit(AuthState.authenticated(existingSession));
+        return;
+      }
+    } catch (e) {
+      debugPrint('AuthBloc: Error checking session: $e');
     }
 
     // Check if this is the first time the app is launched
     final isFirstLaunch = await settingsRepository.isFirstLaunch();
+    debugPrint('AuthBloc: Is first launch: $isFirstLaunch');
 
     if (isFirstLaunch) {
       // First time user - show welcome screen

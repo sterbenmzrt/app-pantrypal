@@ -27,8 +27,10 @@ class _ArchivedShoppingListsScreenState
       context: context,
       builder:
           (ctx) => AlertDialog(
-            title: const Text('Restore Shopping List'),
-            content: Text('Restore "${list.title}" to your active lists?'),
+            title: const Text('Reuse Shopping List'),
+            content: Text(
+              'Reuse "${list.title}" by moving it back to your active lists?',
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
@@ -41,7 +43,7 @@ class _ArchivedShoppingListsScreenState
                   );
                   Navigator.pop(ctx);
                 },
-                child: const Text('Restore'),
+                child: const Text('Reuse'),
               ),
             ],
           ),
@@ -92,7 +94,7 @@ class _ArchivedShoppingListsScreenState
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Archived Lists'), elevation: 0),
+      appBar: AppBar(title: const Text('Shopping History'), elevation: 0),
       body: BlocBuilder<ShoppingBloc, ShoppingState>(
         builder: (context, state) {
           if (state.archiveStatus == ArchiveStatus.loading) {
@@ -113,14 +115,14 @@ class _ArchivedShoppingListsScreenState
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'No Archived Lists',
+                    'No History Yet',
                     style: theme.textTheme.headlineSmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Completed shopping lists will appear here',
+                    'Completed shopping lists will appear here for reuse',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
@@ -233,8 +235,8 @@ class _ArchivedShoppingListsScreenState
                           children: [
                             TextButton.icon(
                               onPressed: () => _showRestoreConfirmation(list),
-                              icon: const Icon(Icons.restore, size: 18),
-                              label: const Text('Restore'),
+                              icon: const Icon(Icons.replay, size: 18),
+                              label: const Text('Reuse'),
                             ),
                             const SizedBox(width: 8),
                             TextButton.icon(

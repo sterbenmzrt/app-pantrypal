@@ -33,7 +33,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 6,
+      version: 7,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -44,6 +44,7 @@ class DatabaseHelper {
     await db.execute(ShoppingListsTable.createTableQuery);
     await db.execute(ShoppingListTable.createTableQuery);
     await db.execute(UserTable.createTableQuery);
+    await db.execute(SessionTable.createTableQuery);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -77,6 +78,10 @@ class DatabaseHelper {
       await db.execute(
         'ALTER TABLE ${ShoppingListsTable.tableName} ADD COLUMN ${ShoppingListsTable.colArchivedAt} TEXT',
       );
+    }
+    if (oldVersion < 7) {
+      // Create session table for reliable session persistence
+      await db.execute(SessionTable.createTableQuery);
     }
   }
 
@@ -454,5 +459,77 @@ class DatabaseHelper {
       debugPrint('Registration failed');
       rethrow;
     }
+  }
+
+  // Session Management Operations (for reliable login persistence)
+
+  /// Save an active session to the database
+  Future<void> saveActiveSession(UserProfile user, {int daysValid = 30}) async {
+    final db = await database;
+
+    // Clear any existing sessions first
+    await db.delete(SessionTable.tableName);
+
+    final expiry = DateTime.now().add(Duration(days: daysValid));
+
+    await db.insert(SessionTable.tableName, {
+      SessionTable.colUserId: user.id,
+      SessionTable.colUserName: user.name,
+      SessionTable.colUserEmail: user.email,
+      SessionTable.colProfileImage: user.profileImage,
+      SessionTable.colExpiryDate: expiry.toIso8601String(),
+      SessionTable.colCreatedAt: DateTime.now().toIso8601String(),
+    });
+    debugPrint(
+      'DatabaseHelper: Session saved to database for user: ${user.email}',
+    );
+  }
+
+  /// Get the active session from database
+  Future<UserProfile?> getActiveSession() async {
+    try {
+      final db = await database;
+      final List<Map<String, dynamic>> maps = await db.query(
+        SessionTable.tableName,
+        limit: 1,
+      );
+
+      if (maps.isEmpty) {
+        debugPrint('DatabaseHelper: No active session found');
+        return null;
+      }
+
+      final session = maps.first;
+      final expiryString = session[SessionTable.colExpiryDate] as String?;
+
+      if (expiryString != null) {
+        final expiry = DateTime.parse(expiryString);
+        if (DateTime.now().isAfter(expiry)) {
+          debugPrint('DatabaseHelper: Session expired, clearing');
+          await clearActiveSession();
+          return null;
+        }
+      }
+
+      debugPrint(
+        'DatabaseHelper: Active session found for: ${session[SessionTable.colUserEmail]}',
+      );
+      return UserProfile(
+        id: session[SessionTable.colUserId] as int?,
+        name: session[SessionTable.colUserName] as String,
+        email: session[SessionTable.colUserEmail] as String,
+        profileImage: session[SessionTable.colProfileImage] as String?,
+      );
+    } catch (e) {
+      debugPrint('DatabaseHelper: Error getting session: $e');
+      return null;
+    }
+  }
+
+  /// Clear the active session (for logout)
+  Future<void> clearActiveSession() async {
+    final db = await database;
+    await db.delete(SessionTable.tableName);
+    debugPrint('DatabaseHelper: Session cleared');
   }
 }

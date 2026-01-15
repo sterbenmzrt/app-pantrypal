@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../models/recipe.dart';
+import '../models/recipe_detail.dart';
 
 class RecipeProvider {
   final Dio _dio;
@@ -65,6 +66,57 @@ class RecipeProvider {
     } catch (e) {
       if (e is RecipeException) rethrow;
       // Log unknown errors internally
+      debugPrint('Unknown recipe error occurred');
+      throw RecipeException('An unexpected error occurred. Please try again.');
+    }
+  }
+
+  /// Fetches detailed recipe information by meal ID.
+  Future<RecipeDetail> getRecipeDetails(String mealId) async {
+    try {
+      if (mealId.isEmpty) {
+        throw RecipeException('Invalid recipe ID.');
+      }
+
+      final response = await _dio.get(
+        "$_baseUrl/lookup.php",
+        queryParameters: {'i': mealId},
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['meals'] == null || (data['meals'] as List).isEmpty) {
+          throw RecipeException('Recipe not found.');
+        }
+
+        return RecipeDetail.fromJson(data['meals'][0]);
+      } else {
+        debugPrint('Recipe API returned status: ${response.statusCode}');
+        throw RecipeException(
+          'Unable to load recipe details. Please try again.',
+        );
+      }
+    } on DioException catch (e) {
+      debugPrint('Recipe API error: ${e.type}');
+
+      switch (e.type) {
+        case DioExceptionType.connectionTimeout:
+        case DioExceptionType.receiveTimeout:
+        case DioExceptionType.sendTimeout:
+          throw RecipeException(
+            'Connection timed out. Please check your internet connection.',
+          );
+        case DioExceptionType.connectionError:
+          throw RecipeException(
+            'No internet connection. Please try again when connected.',
+          );
+        default:
+          throw RecipeException(
+            'Unable to load recipe details. Please try again later.',
+          );
+      }
+    } catch (e) {
+      if (e is RecipeException) rethrow;
       debugPrint('Unknown recipe error occurred');
       throw RecipeException('An unexpected error occurred. Please try again.');
     }

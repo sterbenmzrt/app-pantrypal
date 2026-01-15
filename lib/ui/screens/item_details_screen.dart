@@ -4,10 +4,18 @@ import '../../data/models/inventory_item.dart';
 import '../../logic/inventory/inventory_bloc.dart';
 import '../../logic/inventory/inventory_event.dart';
 import '../../core/utils/number_helpers.dart';
+import 'edit_item_screen.dart';
 
-class ItemDetailsScreen extends StatelessWidget {
+class ItemDetailsScreen extends StatefulWidget {
   final InventoryItem item;
   const ItemDetailsScreen({Key? key, required this.item}) : super(key: key);
+
+  @override
+  State<ItemDetailsScreen> createState() => _ItemDetailsScreenState();
+}
+
+class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
+  late InventoryItem _item;
 
   // Map categories to asset images
   static const Map<String, String> _categoryImages = {
@@ -23,18 +31,42 @@ class ItemDetailsScreen extends StatelessWidget {
   };
 
   @override
+  void initState() {
+    super.initState();
+    _item = widget.item;
+  }
+
+  void _navigateToEdit() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => EditItemScreen(item: _item)),
+    );
+    if (result == true) {
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final int daysRemaining = item.expiryDate.difference(DateTime.now()).inDays;
+    final int daysRemaining =
+        _item.expiryDate.difference(DateTime.now()).inDays;
     final String status = _statusFromDays(daysRemaining);
     final Color statusColor = _statusColor(status);
     final String imagePath =
-        _categoryImages[item.category] ?? _categoryImages['Other']!;
+        _categoryImages[_item.category] ?? _categoryImages['Other']!;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Item Details'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            onPressed: _navigateToEdit,
+            tooltip: 'Edit Item',
+          ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
             onPressed: () => _showDeleteConfirmation(context),
@@ -79,7 +111,7 @@ class ItemDetailsScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          item.name,
+                          _item.name,
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -128,7 +160,7 @@ class ItemDetailsScreen extends StatelessWidget {
                     context,
                     icon: Icons.category_outlined,
                     label: 'Category',
-                    value: item.category,
+                    value: _item.category,
                   ),
                   const SizedBox(height: 12),
                   _buildInfoCard(
@@ -136,23 +168,23 @@ class ItemDetailsScreen extends StatelessWidget {
                     icon: Icons.inventory_2_outlined,
                     label: 'Quantity',
                     value:
-                        '${NumberHelpers.formatQuantity(item.quantity)} ${item.unit}',
+                        '${NumberHelpers.formatQuantity(_item.quantity)} ${_item.unit}',
                   ),
                   const SizedBox(height: 12),
                   _buildInfoCard(
                     context,
                     icon: Icons.calendar_today_outlined,
                     label: 'Expiry Date',
-                    value: _formatDate(item.expiryDate),
+                    value: _formatDate(_item.expiryDate),
                     valueColor: statusColor,
                   ),
-                  if (item.notes != null && item.notes!.isNotEmpty) ...[
+                  if (_item.notes != null && _item.notes!.isNotEmpty) ...[
                     const SizedBox(height: 12),
                     _buildInfoCard(
                       context,
                       icon: Icons.notes_outlined,
                       label: 'Notes',
-                      value: item.notes!,
+                      value: _item.notes!,
                     ),
                   ],
                 ],
@@ -227,7 +259,7 @@ class ItemDetailsScreen extends StatelessWidget {
       builder:
           (ctx) => AlertDialog(
             title: const Text('Delete Item'),
-            content: Text('Are you sure you want to delete "${item.name}"?'),
+            content: Text('Are you sure you want to delete "${_item.name}"?'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
@@ -236,7 +268,7 @@ class ItemDetailsScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   context.read<InventoryBloc>().add(
-                    DeleteInventoryItem(item.id),
+                    DeleteInventoryItem(_item.id),
                   );
                   Navigator.pop(ctx); // Close dialog
                   Navigator.pop(context); // Go back to inventory

@@ -16,8 +16,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    const DashboardScreen(),
+  void _setCurrentIndex(int index) {
+    setState(() => _currentIndex = index);
+  }
+
+  List<Widget> get _screens => [
+    DashboardScreen(onNavigateToTab: _setCurrentIndex),
     const InventoryScreen(),
     const RecipeSearchScreen(),
     const ShoppingListScreen(),
@@ -37,9 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final titles = [
       'Dashboard',
-      'My Pantry',
+      'Inventory',
       'Recipes & Meal Plan',
-      'Shopping List',
+      'Grocery List',
       'Profile',
     ];
 
@@ -50,19 +54,57 @@ class _HomeScreenState extends State<HomeScreen> {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
+          // Show notification icon on Dashboard tab (index 0)
+          if (_currentIndex == 0)
+            Stack(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Notifications coming soon!'),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.notifications_outlined),
+                  tooltip: 'Notifications',
+                ),
+                // Notification badge (placeholder for future development)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        width: 2,
+                      ),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 8,
+                      minHeight: 8,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           // Show archive icon only on Shopping List tab (index 3)
           if (_currentIndex == 3)
             IconButton(
               onPressed: _navigateToArchive,
               icon: const Icon(Icons.archive_outlined),
-              tooltip: 'Archived Lists',
+              tooltip: 'History',
             ),
         ],
       ),
       body: _screens[_currentIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
-        onDestinationSelected: (index) => setState(() => _currentIndex = index),
+        onDestinationSelected: _setCurrentIndex,
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.dashboard_outlined),
@@ -82,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
           NavigationDestination(
             icon: Icon(Icons.receipt_long_outlined),
             selectedIcon: Icon(Icons.receipt_long),
-            label: "Shopping",
+            label: "Grocery List",
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),
